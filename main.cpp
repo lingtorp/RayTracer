@@ -23,7 +23,7 @@ int main() {
   size_t nx = 200;
   size_t ny = 100;
   image << nx << " " << ny << '\n' << 255 << '\n';
-  Vec3<> low_left_corner{-2.0, -1.0, -1.0};
+  Vec3<> low_left_corner{-2.0, -1.0, -1.0}; // Frame a bit in front of camera
   Vec3<> horizontal{4.0, 0.0, 0.0};
   Vec3<> vertical{0.0, 2.0, 0.0};
   Vec3<> origin{};

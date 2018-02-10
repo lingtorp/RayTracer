@@ -14,6 +14,7 @@ struct World {
     double closest_so_far = t_max;
     for (auto& hitable : hitables) {
       if (hitable->hit(r, t_min, closest_so_far, hit)) {
+        closest_so_far = hit.t;
         hit_anything = true;
       }
     }
