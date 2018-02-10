@@ -32,7 +32,6 @@ public:
         hit.normal = (hit.p - center) / radius;
         return true;
       }
-      return true;
     }
     return false; // Missed sphere
   }
