@@ -2,8 +2,21 @@
 #include <fstream>
 #include "vector.h"
 
-Vec3<> color(const Ray& ray) {
-  Vec3<> dir = ray.direction().normalized();
+/// dot((p(t) - c, p(t) - c)) = R*R sphere equation in vector form
+bool hit_sphere(const Vec3<>& center, float radius, const Ray& r) {
+  Vec3<> oc = r.origin() - center; // Origin to center
+  double a = dot(r.direction(), r.direction());
+  double b = 2 * dot(r.direction(), oc);
+  double c = dot(oc, oc) - radius*radius;
+  double discriminant = b*b - 4*a*c;
+  return discriminant > 0;
+}
+
+Vec3<> color(const Ray& r) {
+  if (hit_sphere({0, 0, -1}, 0.5, r)) {
+    return {1, 0, 0};
+  }
+  Vec3<> dir = r.direction().normalized();
   double t = 0.5 * (dir.y + 1.0);
   return (1.0 - t) * Vec3<>{1.0, 1.0, 1.0} + t * Vec3<>{0.5, 0.7, 1.0};
 }

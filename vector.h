@@ -25,9 +25,13 @@ inline Vec3<T> operator*(const Vec3<T> &v, double r) { return {v.x * r, v.y * r,
 template<typename T>
 inline Vec3<T> operator*(double l, const Vec3<T>& v) { return {v.x * l, v.y * l, v.z * l}; }
 template<typename T>
+inline Vec3<T> operator*(const Vec3<T>& l, const Vec3<T>& r) { return {l.x * r.x, l.y * r.y, l.z * r.z}; }
+template<typename T>
 inline Vec3<T> operator+(const Vec3<T>& l, const Vec3<T>& r) { return {l.x + r.x, l.y + r.y, l.z + r.z}; }
 template<typename T>
 inline Vec3<T> operator-(const Vec3<T>& l, const Vec3<T>& r) { return {l.x - r.x, l.y - r.y, l.z - r.z}; }
+template<typename T>
+inline double dot(const Vec3<T>& l, const Vec3<T>& r) { return l.x * r.x + l.y * r.y + l.z * r.z; }
 
 /// p(t) = A + t * B
 struct Ray {
