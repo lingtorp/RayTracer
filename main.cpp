@@ -29,6 +29,7 @@ int main() {
   image << "P3" << '\n';
   size_t nx = 200;
   size_t ny = 100;
+  size_t ns = 100; // Number of samples per px
   image << nx << " " << ny << '\n' << 255 << '\n';
   Camera cam;
   World world;
@@ -36,16 +37,20 @@ int main() {
   world.hitables.push_back(new Sphere{Vec3<>{0, -100.5, -1}, 100});
   for (int j = ny - 1; j >= 0; j--) {
     for (int i = 0; i < nx; i++) {
-      double u = double(i) / double(nx);
-      double v = double(j) / double(ny);
-      Ray r = cam.get_ray(u, v);
+      Vec3<> t_color{};
+      for (int s = 0; s < ns; s++) {
+        double u = double(i) / double(nx);
+        double v = double(j) / double(ny);
+        Ray r = cam.get_ray(u, v);
+  
+        Vec3<> p = r(2.0);
+        t_color += color(r, world);
+      }
+      t_color /= double(ns);
       
-      Vec3<> p = r(2.0);
-      Vec3<> col = color(r, world);
-      
-      int ir = int(col.x * 255);
-      int ig = int(col.y * 255);
-      int ib = int(col.z * 255);
+      int ir = int(t_color.x * 255);
+      int ig = int(t_color.y * 255);
+      int ib = int(t_color.z * 255);
       image << ir << " " << ig << " " << ib << '\n';
     }
   }

@@ -29,11 +29,17 @@ inline Vec3<T> operator*(const Vec3<T>& l, const Vec3<T>& r) { return {l.x * r.x
 template<typename T>
 inline Vec3<T> operator+(const Vec3<T>& l, const Vec3<T>& r) { return {l.x + r.x, l.y + r.y, l.z + r.z}; }
 template<typename T>
-inline Vec3<T> operator+(const Vec3<T> l, T r) { return {l.x + r, l.y + r, l.z + r}; }
+inline Vec3<T> operator+(const Vec3<T>& l, T r) { return {l.x + r, l.y + r, l.z + r}; }
+template<typename T>
+inline void operator+=(Vec3<T>& l, const Vec3<T>& r) { l.x += r.x; l.y += r.y; l.z += r.z; }
 template<typename T>
 inline Vec3<T> operator-(const Vec3<T>& l, const Vec3<T>& r) { return {l.x - r.x, l.y - r.y, l.z - r.z}; }
 template<typename T>
 inline Vec3<T> operator/(const Vec3<T>& l, T r) { return {l.x / r, l.y / r, l.z / r}; }
+template<typename T>
+inline void operator/=(Vec3<T>& l, const Vec3<T>& r) { l.x /= r.x; l.y /= r.y; l.z /= r.z; }
+template<typename T>
+inline void operator/=(Vec3<T>& l, T r) { l.x /= r; l.y /= r; l.z /= r; }
 template<typename T>
 inline double dot(const Vec3<T>& l, const Vec3<T>& r) { return l.x * r.x + l.y * r.y + l.z * r.z; }
 
