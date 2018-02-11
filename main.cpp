@@ -39,8 +39,8 @@ int main() {
     for (int i = 0; i < nx; i++) {
       Vec3<> t_color{};
       for (int s = 0; s < ns; s++) {
-        double u = double(i) / double(nx);
-        double v = double(j) / double(ny);
+        double u = double(i + rand()) / double(nx);
+        double v = double(j + rand()) / double(ny);
         Ray r = cam.get_ray(u, v);
   
         Vec3<> p = r(2.0);
