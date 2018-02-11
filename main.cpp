@@ -1,8 +1,10 @@
 #include <iostream>
 #include <fstream>
+#include <random>
 #include "vector.h"
 #include "world.h"
 #include "sphere.h"
+#include "camera.h"
 
 /// dot((p(t) - c, p(t) - c)) = R*R sphere equation in vector form
 Vec3<> color(const Ray& r, World& world) {
@@ -17,16 +19,18 @@ Vec3<> color(const Ray& r, World& world) {
 }
 
 int main() {
+  std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
+  std::default_random_engine engine{static_cast<unsigned int>(tp.time_since_epoch().count())};
+  std::uniform_real_distribution<double> distribution(0.0, 1.0); // 0.0 <= x < 1.0
+  auto rand = std::bind(distribution, engine);
+  
   std::ofstream image;
   image.open("gradient.ppm");
   image << "P3" << '\n';
   size_t nx = 200;
   size_t ny = 100;
   image << nx << " " << ny << '\n' << 255 << '\n';
-  Vec3<> low_left_corner{-2.0, -1.0, -1.0}; // Frame a bit in front of camera
-  Vec3<> horizontal{4.0, 0.0, 0.0};
-  Vec3<> vertical{0.0, 2.0, 0.0};
-  Vec3<> origin{};
+  Camera cam;
   World world;
   world.hitables.push_back(new Sphere{Vec3<>{0, 0, -1}, 0.5});
   world.hitables.push_back(new Sphere{Vec3<>{0, -100.5, -1}, 100});
@@ -34,7 +38,7 @@ int main() {
     for (int i = 0; i < nx; i++) {
       double u = double(i) / double(nx);
       double v = double(j) / double(ny);
-      Ray r{origin, low_left_corner + u * horizontal + v * vertical};
+      Ray r = cam.get_ray(u, v);
       
       Vec3<> p = r(2.0);
       Vec3<> col = color(r, world);
