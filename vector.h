@@ -15,6 +15,7 @@ struct Vec3 {
   inline Vec3<T> operator-() const { return Vec3<T>{-x, -y, -z}; }
   
   inline double length() const { return std::sqrt(x*x + y*y + z*z); }
+  inline double squared_length() const { return x*x + y*y + z*z; }
   inline void normalize() { auto lng = length(); x /= lng; y /= lng; z /= lng;  }
   inline Vec3<T> normalized() { auto lng = length(); return {x /= lng, y /= lng, z /= lng};  }
 };

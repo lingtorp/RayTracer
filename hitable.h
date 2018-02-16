@@ -5,7 +5,7 @@
 
 struct Hit {
   double t = 0.0;
-  Vec3<> p;
+  Vec3<> p; // Position
   Vec3<> normal;
 };
 
