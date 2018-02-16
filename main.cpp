@@ -21,7 +21,7 @@ Vec3<> random_in_unit_sphere() {
 /// dot((p(t) - c, p(t) - c)) = R*R sphere equation in vector form
 Vec3<> color(const Ray& r, World& world) {
   Hit hit;
-  if (world.hit(r, 0.0, MAXFLOAT, hit)) {
+  if (world.hit(r, 0.001, MAXFLOAT, hit)) {
     Vec3<> target = hit.p + hit.normal + random_in_unit_sphere();
     return 0.5*color(Ray{hit.p, target - hit.p}, world);
   } else {
