@@ -2,14 +2,17 @@
 #define RAYTRACER_SPHERE_H
 
 #include "hitable.h"
+#include "material.h"
 
 class Sphere: public Hitable {
 public:
   Vec3<> center;
   double radius = 1.0;
+  Material* material = nullptr;
   
   Sphere() = default;
   Sphere(Vec3<> center, float radius): center{center}, radius(radius) {};
+  Sphere(Vec3<> center, float radius, Material* material): center{center}, radius(radius), material(material) {};
 
   bool hit(const Ray& r, double t_min, double t_max, Hit& hit) const override {
     Vec3<> oc = r.origin() - center; // Origin to center
@@ -23,6 +26,7 @@ public:
         hit.t = tmp;
         hit.p = r(hit.t);
         hit.normal = (hit.p - center) / radius;
+        hit.mat = material;
         return true;
       }
       tmp = (-b + std::sqrt(discriminant)) / (2.0*a);
@@ -30,6 +34,7 @@ public:
         hit.t = tmp;
         hit.p = r(hit.t);
         hit.normal = (hit.p - center) / radius;
+        hit.mat = material;
         return true;
       }
     }

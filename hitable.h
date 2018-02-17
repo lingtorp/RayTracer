@@ -3,10 +3,13 @@
 
 #include "vector.h"
 
+class Material;
+
 struct Hit {
   double t = 0.0;
-  Vec3<> p; // Position
-  Vec3<> normal;
+  Vec3<> p{}; // Position
+  Vec3<> normal{};
+  Material* mat = nullptr;
 };
 
 class Hitable {

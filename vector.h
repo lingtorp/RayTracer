@@ -44,6 +44,11 @@ inline void operator/=(Vec3<T>& l, T r) { l.x /= r; l.y /= r; l.z /= r; }
 template<typename T>
 inline double dot(const Vec3<T>& l, const Vec3<T>& r) { return l.x * r.x + l.y * r.y + l.z * r.z; }
 
+/// Linear Algebra
+Vec3<> reflect(const Vec3<>& v, const Vec3<>& n) {
+  return v - 2*dot(v, n)*n;
+}
+
 /// p(t) = A + t * B
 struct Ray {
   // Origin
