@@ -10,19 +10,6 @@ public:
 };
 
 class Lambertian: public Material {
-private:
-  Vec3<> random_in_unit_sphere() const {
-    std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
-    std::default_random_engine engine{static_cast<unsigned int>(tp.time_since_epoch().count())};
-    std::uniform_real_distribution<double> distribution(0.0, 1.0); // 0.0 <= x < 1.0
-    auto rand = std::bind(distribution, engine);
-    Vec3<> p;
-    do {
-      p = 2.0 * Vec3<>{rand(), rand(), rand()} - Vec3<>{1.0};
-    } while (p.squared_length() >= 1.0);
-    return p;
-  }
-  
 public:
   Vec3<> albedo;
   Lambertian(double r, double g, double b): albedo{r, g, b} {};
@@ -39,12 +26,15 @@ public:
 class Metal: public Material {
 public:
   Vec3<> albedo;
+  double fuzz = 0.0; // Fuzziness of the scattered rays
   Metal(double r, double g, double b): albedo{r, g, b} {};
+  Metal(double r, double g, double b, double fuzz): albedo{r, g, b}, fuzz(fuzz) {};
   explicit Metal(const Vec3<>& albedo): albedo{albedo} {};
+  explicit Metal(const Vec3<>& albedo, double fuzz): albedo{albedo}, fuzz(fuzz) {};
   
   bool scatter(const Ray& r, const Hit& hit, Vec3<>& attenuation, Ray& scattered) const override {
     Vec3<> reflected = reflect(r.direction().normalized(), hit.normal);
-    scattered = Ray{hit.p, reflected};
+    scattered = Ray{hit.p, reflected + fuzz * random_in_unit_sphere()};
     attenuation = albedo;
     return (dot(scattered.direction(), hit.normal) > 0);
   }
