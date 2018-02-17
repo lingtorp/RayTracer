@@ -17,7 +17,7 @@ struct Vec3 {
   inline double length() const { return std::sqrt(x*x + y*y + z*z); }
   inline double squared_length() const { return x*x + y*y + z*z; }
   inline void normalize() { auto lng = length(); x /= lng; y /= lng; z /= lng;  }
-  inline Vec3<T> normalized() { auto lng = length(); return {x /= lng, y /= lng, z /= lng};  }
+  inline Vec3<T> normalized()const { auto lng = length(); return {x / lng, y / lng, z / lng};  }
 };
 
 // Vec3 operators

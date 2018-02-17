@@ -43,7 +43,8 @@ int main() {
   world.hitables.push_back(new Sphere{Vec3<>{0, 0, -1}, 0.5, new Lambertian{0.8, 0.3, 0.3}});
   world.hitables.push_back(new Sphere{Vec3<>{0, -100.5, -1}, 100, new Lambertian{0.8, 0.8, 0.0}});
   world.hitables.push_back(new Sphere{Vec3<>{1, 0, -1}, 0.5, new Metal{0.8, 0.8, 0.0, 0.3}});
-  world.hitables.push_back(new Sphere{Vec3<>{-1, 0, -1}, 0.5, new Metal{0.8, 0.8, 0.8}});
+  // world.hitables.push_back(new Sphere{Vec3<>{-1, 0, -1}, 0.5, new Metal{0.8, 0.8, 0.8}});
+  world.hitables.push_back(new Sphere{Vec3<>{-1, 0, -1}, 0.5, new Dielectric{1.5}});
   for (int j = ny - 1; j >= 0; j--) {
     for (int i = 0; i < nx; i++) {
       Vec3<> t_color{};
