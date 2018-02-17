@@ -31,6 +31,8 @@ int main() {
   std::uniform_real_distribution<double> distribution(0.0, 1.0); // 0.0 <= x < 1.0
   auto rand = std::bind(distribution, engine);
   
+  time_t start = std::time(nullptr);
+  
   std::ofstream image;
   image.open("gradient.ppm");
   image << "P3" << '\n';
@@ -38,12 +40,11 @@ int main() {
   size_t ny = 200;
   size_t ns = 100; // Number of samples per px
   image << nx << " " << ny << '\n' << 255 << '\n';
-  Camera cam;
+  Camera cam{120, double(nx) / double(ny)};
   World world;
   world.hitables.push_back(new Sphere{Vec3<>{0, 0, -1}, 0.5, new Lambertian{0.8, 0.3, 0.3}});
   world.hitables.push_back(new Sphere{Vec3<>{0, -100.5, -1}, 100, new Lambertian{0.8, 0.8, 0.0}});
   world.hitables.push_back(new Sphere{Vec3<>{1, 0, -1}, 0.5, new Metal{0.8, 0.8, 0.0, 0.3}});
-  // world.hitables.push_back(new Sphere{Vec3<>{-1, 0, -1}, 0.5, new Metal{0.8, 0.8, 0.8}});
   world.hitables.push_back(new Sphere{Vec3<>{-1, 0, -1}, 0.5, new Dielectric{1.5}});
   for (int j = ny - 1; j >= 0; j--) {
     for (int i = 0; i < nx; i++) {
@@ -64,5 +65,10 @@ int main() {
       image << ir << " " << ig << " " << ib << '\n';
     }
   }
+  
+  time_t end = std::time(nullptr);
+  double diff = std::difftime(end, start);
+  std::cout << "Finished in: " << diff << " seconds." << std::endl;
+  
   return 0;
 }
