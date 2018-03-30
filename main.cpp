@@ -30,7 +30,6 @@ Vec3<> color(const Ray& r, World& world, int depth) {
 int main() {
   SDL_Init(SDL_INIT_EVERYTHING);
 
-  bool quit = false;
   size_t nx = 400;
   size_t ny = 200;
   size_t ns = 10; // Number of samples per px
@@ -39,9 +38,7 @@ int main() {
   SDL_WindowFlags flags = SDL_WINDOW_SHOWN;
   SDL_Window* window = SDL_CreateWindow("RayTracer", 0, 0, nx, ny, flags);
   SDL_Surface* scr = SDL_GetWindowSurface(window);
-  std::cout << (SDL_GetWindowPixelFormat(window) == SDL_PIXELFORMAT_ARGB8888) << std::endl;
   uint32_t* pixels = (uint32_t*) scr->pixels;
-  std::cout << (scr->format->format == SDL_PIXELFORMAT_ARGB8888) << std::endl;
 
   std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
   std::default_random_engine engine{static_cast<unsigned int>(tp.time_since_epoch().count())};
