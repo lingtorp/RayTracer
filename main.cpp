@@ -51,15 +51,13 @@ int main() {
   world.hitables.push_back(new Sphere{Vec3<>{-1, 0, -1}, 0.5, new Dielectric{1.5}});
 
   time_t start = std::time(nullptr);
-  for (int j = ny - 1; j >= 0; j--) {
+  for (int j = 0; j <= ny; j++) {
     for (int i = 0; i < nx; i++) {
       Vec3<> t_color{};
       for (int s = 0; s < ns; s++) {
         double u = double(i + rand()) / double(nx);
         double v = double(j + rand()) / double(ny);
         Ray r = cam.get_ray(u, v);
-
-        Vec3<> p = r(2.0);
         t_color += color(r, world, 0);
       }
       t_color /= double(ns);
@@ -73,7 +71,7 @@ int main() {
       pixel += (ir << (8 * 2));
       pixel += (ig << (8 * 1));
       pixel += (ib << (8 * 0));
-      pixels[(j * nx) + i] = pixel;
+      pixels[((ny - j) * nx) + i] = pixel;
     }
   }
   
