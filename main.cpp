@@ -33,7 +33,7 @@ int main() {
   size_t nx = 400;
   size_t ny = 200;
   size_t ns = 10; // Number of samples per px
-  Camera cam{120, double(nx) / double(ny)};
+  Camera cam{{-2, 2, 1}, {0, 0, -1}, {0, 1, 0}, 90, double(nx) / double(ny)};
 
   SDL_Window* window = SDL_CreateWindow("RayTracer", 0, 0, nx, ny, 0);
   SDL_Surface* scr = SDL_GetWindowSurface(window);
