@@ -35,8 +35,7 @@ int main() {
   size_t ns = 10; // Number of samples per px
   Camera cam{120, double(nx) / double(ny)};
 
-  SDL_WindowFlags flags = SDL_WINDOW_SHOWN;
-  SDL_Window* window = SDL_CreateWindow("RayTracer", 0, 0, nx, ny, flags);
+  SDL_Window* window = SDL_CreateWindow("RayTracer", 0, 0, nx, ny, 0);
   SDL_Surface* scr = SDL_GetWindowSurface(window);
   uint32_t* pixels = (uint32_t*) scr->pixels;
 
@@ -83,7 +82,18 @@ int main() {
   std::cout << "Finished in: " << diff << " seconds." << std::endl;
 
   SDL_UpdateWindowSurface(window);
-  SDL_Delay(20000);
+  
+  bool quit = false;
+  while (!quit) {
+    SDL_Event event{};
+    while (SDL_PollEvent(&event)) {
+      switch (event.type) {
+        case SDL_QUIT:
+          quit = true;
+          break;
+      }
+    }
+  }
   
   return 0;
 }

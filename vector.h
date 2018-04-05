@@ -16,31 +16,41 @@ struct Vec3 {
   
   inline double length() const { return std::sqrt(x*x + y*y + z*z); }
   inline double squared_length() const { return x*x + y*y + z*z; }
-  inline void normalize() { auto lng = length(); x /= lng; y /= lng; z /= lng;  }
-  inline Vec3<T> normalized()const { auto lng = length(); return {x / lng, y / lng, z / lng};  }
+  inline void normalize() { auto lng = length(); x /= lng; y /= lng; z /= lng; }
+  inline Vec3<T> normalized() const { auto lng = length(); return {x / lng, y / lng, z / lng}; }
 };
 
-// Vec3 operators
+/// Vec3 operators
 template<typename T>
 inline Vec3<T> operator*(const Vec3<T> &v, double r) { return {v.x * r, v.y * r, v.z * r}; }
+
 template<typename T>
 inline Vec3<T> operator*(double l, const Vec3<T>& v) { return {v.x * l, v.y * l, v.z * l}; }
+
 template<typename T>
 inline Vec3<T> operator*(const Vec3<T>& l, const Vec3<T>& r) { return {l.x * r.x, l.y * r.y, l.z * r.z}; }
+
 template<typename T>
 inline Vec3<T> operator+(const Vec3<T>& l, const Vec3<T>& r) { return {l.x + r.x, l.y + r.y, l.z + r.z}; }
+
 template<typename T>
 inline Vec3<T> operator+(const Vec3<T>& l, T r) { return {l.x + r, l.y + r, l.z + r}; }
+
 template<typename T>
 inline void operator+=(Vec3<T>& l, const Vec3<T>& r) { l.x += r.x; l.y += r.y; l.z += r.z; }
+
 template<typename T>
 inline Vec3<T> operator-(const Vec3<T>& l, const Vec3<T>& r) { return {l.x - r.x, l.y - r.y, l.z - r.z}; }
+
 template<typename T>
 inline Vec3<T> operator/(const Vec3<T>& l, T r) { return {l.x / r, l.y / r, l.z / r}; }
+
 template<typename T>
 inline void operator/=(Vec3<T>& l, const Vec3<T>& r) { l.x /= r.x; l.y /= r.y; l.z /= r.z; }
+
 template<typename T>
 inline void operator/=(Vec3<T>& l, T r) { l.x /= r; l.y /= r; l.z /= r; }
+
 template<typename T>
 inline double dot(const Vec3<T>& l, const Vec3<T>& r) { return l.x * r.x + l.y * r.y + l.z * r.z; }
 
