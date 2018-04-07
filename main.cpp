@@ -49,37 +49,6 @@ int main() {
   world.hitables.push_back(new Sphere{Vec3<>{0, -100.5, -1}, 100, new Lambertian{0.8, 0.8, 0.0}});
   world.hitables.push_back(new Sphere{Vec3<>{1, 0, -1}, 0.5, new Metal{0.8, 0.8, 0.0, 0.3}});
   world.hitables.push_back(new Sphere{Vec3<>{-1, 0, -1}, 0.5, new Dielectric{1.5}});
-
-  time_t start = std::time(nullptr);
-  for (int j = 0; j <= ny; j++) {
-    for (int i = 0; i < nx; i++) {
-      Vec3<> t_color{};
-      for (int s = 0; s < ns; s++) {
-        double u = double(i + rand()) / double(nx);
-        double v = double(j + rand()) / double(ny);
-        Ray r = cam.get_ray(u, v);
-        t_color += color(r, world, 0);
-      }
-      t_color /= double(ns);
-      t_color = {std::sqrt(t_color.x), std::sqrt(t_color.y), std::sqrt(t_color.z)}; // Gamma-2 correction
-      auto ir = uint32_t(t_color.x * 255);
-      auto ig = uint32_t(t_color.y * 255);
-      auto ib = uint32_t(t_color.z * 255);
-      auto ia = uint32_t(1);
-      uint32_t pixel = 0;
-      pixel += (ia << (8 * 3));
-      pixel += (ir << (8 * 2));
-      pixel += (ig << (8 * 1));
-      pixel += (ib << (8 * 0));
-      pixels[((ny - j) * nx) + i] = pixel;
-    }
-  }
-  
-  time_t end = std::time(nullptr);
-  double diff = std::difftime(end, start);
-  std::cout << "Finished in: " << diff << " seconds." << std::endl;
-
-  SDL_UpdateWindowSurface(window);
   
   bool quit = false;
   while (!quit) {
@@ -91,6 +60,37 @@ int main() {
           break;
       }
     }
+  
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int j = 0; j <= ny; j++) {
+      for (int i = 0; i < nx; i++) {
+        Vec3<> t_color{};
+        for (int s = 0; s < ns; s++) {
+          double u = double(i + rand()) / double(nx);
+          double v = double(j + rand()) / double(ny);
+          Ray r = cam.get_ray(u, v);
+          t_color += color(r, world, 0);
+        }
+        t_color /= double(ns);
+        t_color = {std::sqrt(t_color.x), std::sqrt(t_color.y), std::sqrt(t_color.z)}; // Gamma-2 correction
+        auto ir = uint32_t(t_color.x * 255);
+        auto ig = uint32_t(t_color.y * 255);
+        auto ib = uint32_t(t_color.z * 255);
+        auto ia = uint32_t(1);
+        uint32_t pixel = 0;
+        pixel += (ia << (8 * 3));
+        pixel += (ir << (8 * 2));
+        pixel += (ig << (8 * 1));
+        pixel += (ib << (8 * 0));
+        pixels[((ny - j) * nx) + i] = pixel;
+      }
+    }
+  
+    auto end = std::chrono::high_resolution_clock::now();
+    auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << diff << " ms, " << (ns*nx*ny)/(1000.0/diff) << " rays/s" << std::endl;
+  
+    SDL_UpdateWindowSurface(window);
   }
   
   return 0;
