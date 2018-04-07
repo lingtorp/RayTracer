@@ -7,9 +7,9 @@ template<typename T = double>
 struct Vec3 {
   T x, y, z;
   
-  Vec3(): x(0.0f), y(0.0f), z(0.0f) {};
-  explicit Vec3(T value): x(value), y(value), z(value) {};
-  Vec3(T x, T y, T z): x(x), y(y), z(z) {};
+  constexpr Vec3(): x(0.0f), y(0.0f), z(0.0f) {};
+  constexpr explicit Vec3(T value): x(value), y(value), z(value) {};
+  constexpr Vec3(T x, T y, T z): x(x), y(y), z(z) {};
   
   /// Operators
   inline Vec3<T> operator-() const { return Vec3<T>{-x, -y, -z}; }

@@ -32,8 +32,11 @@ int main() {
 
   size_t nx = 400;
   size_t ny = 200;
-  size_t ns = 10; // Number of samples per px
-  Camera cam{{-2, 2, 1}, {0, 0, -1}, {0, 1, 0}, 90, double(nx) / double(ny)};
+  size_t ns = 100; // Number of samples per px
+  Vec3<> lookfrom = {3, 3, 2};
+  Vec3<> lookat = {0, 0, -1};
+  double dist_to_focus = (lookfrom - lookat).length();
+  Camera cam{lookfrom, lookat, 20, double(nx) / double(ny), 0.5, dist_to_focus};
 
   SDL_Window* window = SDL_CreateWindow("RayTracer", 0, 0, nx, ny, 0);
   SDL_Surface* scr = SDL_GetWindowSurface(window);
@@ -88,7 +91,7 @@ int main() {
   
     auto end = std::chrono::high_resolution_clock::now();
     auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::cout << diff << " ms, " << (ns*nx*ny)/(1000.0/diff) << " rays/s" << std::endl;
+    std::cout << diff << " ms, " << (ns*nx*ny)/(diff/1000.0) << " rays/s" << std::endl;
   
     SDL_UpdateWindowSurface(window);
   }
