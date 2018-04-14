@@ -63,9 +63,9 @@ void thread_work(const World& world, const Camera& cam, uint32_t* pixels, int ns
 int main() {
   SDL_Init(SDL_INIT_EVERYTHING);
 
-  size_t nx = 400;
-  size_t ny = 200;
-  size_t ns = 10; // Number of samples per px
+  const size_t nx = 400;
+  const size_t ny = 200;
+  const size_t ns = 10; // Number of samples per px
   Vec3<> lookfrom = {3, 3, 2};
   Vec3<> lookat = {0, 0, -1};
   double dist_to_focus = (lookfrom - lookat).length();
@@ -81,7 +81,7 @@ int main() {
   world.hitables.push_back(new Sphere{Vec3<>{1, 0, -1}, 0.5, new Metal{0.8, 0.8, 0.0, 0.3}});
   world.hitables.push_back(new Sphere{Vec3<>{-1, 0, -1}, 0.5, new Dielectric{1.5}});
   
-  size_t num_threads = std::thread::hardware_concurrency() == 0 ? 4 : std::thread::hardware_concurrency();
+  const size_t num_threads = std::thread::hardware_concurrency() == 0 ? 4 : std::thread::hardware_concurrency();
   std::cout << "Starting " << num_threads << " number of threads." << std::endl;
   std::vector<std::thread> threads{};
   auto start = std::chrono::high_resolution_clock::now();

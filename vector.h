@@ -7,7 +7,7 @@ template<typename T = double>
 struct Vec3 {
   T x, y, z;
   
-  constexpr Vec3(): x(0.0f), y(0.0f), z(0.0f) {};
+  constexpr Vec3(): x(0.0), y(0.0), z(0.0) {};
   constexpr explicit Vec3(T value): x(value), y(value), z(value) {};
   constexpr Vec3(T x, T y, T z): x(x), y(y), z(z) {};
   
@@ -60,7 +60,7 @@ inline Vec3<T> cross(const Vec3<T>& l, const Vec3<T>& r) {
 }
 
 /// Linear Algebra
-Vec3<> reflect(const Vec3<>& v, const Vec3<>& n) {
+inline Vec3<> reflect(const Vec3<>& v, const Vec3<>& n) {
   return v - 2*dot(v, n)*n;
 }
 
