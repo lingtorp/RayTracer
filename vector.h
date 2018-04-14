@@ -65,13 +65,9 @@ Vec3<> reflect(const Vec3<>& v, const Vec3<>& n) {
 }
 
 Vec3<> random_in_unit_sphere() {
-  static std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
-  static std::default_random_engine engine{static_cast<unsigned int>(tp.time_since_epoch().count())};
-  static std::uniform_real_distribution<double> distribution(0.0, 1.0); // 0.0 <= x < 1.0
-  static auto rand = std::bind(distribution, engine);
   Vec3<> p;
   do {
-    p = 2.0 * Vec3<>{rand(), rand(), rand()} - Vec3<>{1.0};
+    p = 2.0 * Vec3<>{drand48(), drand48(), drand48()} - Vec3<>{1.0};
   } while (p.squared_length() >= 1.0);
   return p;
 }

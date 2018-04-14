@@ -35,17 +35,12 @@ struct Region {
 };
 
 void thread_work(const World& world, const Camera& cam, uint32_t* pixels, int ns, Region reg) {
-  std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
-  std::default_random_engine engine{static_cast<unsigned int>(tp.time_since_epoch().count())};
-  std::uniform_real_distribution<double> distribution(0.0, 1.0); // 0.0 <= x < 1.0
-  auto rand = std::bind(distribution, engine);
-  
   for (size_t j = reg.y0; j <= reg.y1; j++) {
     for (size_t i = reg.x0; i <= reg.x1; i++) {
       Vec3<> t_color{};
       for (int s = 0; s < ns; s++) {
-        double u = double(i + rand()) / double(reg.nx);
-        double v = double(j + rand()) / double(reg.ny);
+        double u = double(i + drand48()) / double(reg.nx);
+        double v = double(j + drand48()) / double(reg.ny);
         Ray r = cam.get_ray(u, v);
         t_color += color(r, world, 0);
       }
