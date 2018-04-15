@@ -7,7 +7,7 @@ template<typename T = double>
 struct Vec3 {
   T x, y, z;
   
-  constexpr Vec3(): x(0.0f), y(0.0f), z(0.0f) {};
+  constexpr Vec3(): x(0.0), y(0.0), z(0.0) {};
   constexpr explicit Vec3(T value): x(value), y(value), z(value) {};
   constexpr Vec3(T x, T y, T z): x(x), y(y), z(z) {};
   
@@ -60,18 +60,14 @@ inline Vec3<T> cross(const Vec3<T>& l, const Vec3<T>& r) {
 }
 
 /// Linear Algebra
-Vec3<> reflect(const Vec3<>& v, const Vec3<>& n) {
+inline Vec3<> reflect(const Vec3<>& v, const Vec3<>& n) {
   return v - 2*dot(v, n)*n;
 }
 
 Vec3<> random_in_unit_sphere() {
-  std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
-  std::default_random_engine engine{static_cast<unsigned int>(tp.time_since_epoch().count())};
-  std::uniform_real_distribution<double> distribution(0.0, 1.0); // 0.0 <= x < 1.0
-  auto rand = std::bind(distribution, engine);
   Vec3<> p;
   do {
-    p = 2.0 * Vec3<>{rand(), rand(), rand()} - Vec3<>{1.0};
+    p = 2.0 * Vec3<>{drand48(), drand48(), drand48()} - Vec3<>{1.0};
   } while (p.squared_length() >= 1.0);
   return p;
 }

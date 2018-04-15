@@ -36,7 +36,7 @@ struct Camera {
     vertical = 2*half_height*focus_dist*v;
   };
   
-  Ray get_ray(double s, double t) {
+  Ray get_ray(double s, double t) const {
     Vec3<> rd = lens_radius*rand_in_unit_disc();
     Vec3<> offset = u*rd.x + v*rd.y;
     return Ray{origin + offset, frame_anchor + s*horizontal + t*vertical - origin - offset};
