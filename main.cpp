@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <random>
+#include "random.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_video.h>
 #include <thread>
@@ -76,8 +77,9 @@ int main() {
   uint32_t* pixels = (uint32_t*) scr->pixels;
 
   World world;
-  world.hitables.push_back(new Sphere{Vec3<>{0, 0, -1}, 0.5, new Lambertian{0.8, 0.3, 0.3}});
-  world.hitables.push_back(new Sphere{Vec3<>{0, -100.5, -1}, 100, new Lambertian{0.8, 0.8, 0.0}});
+  auto checker_texture = new CheckerTexture{new ConstantTexture{0.2, 0.3, 0.1}, new ConstantTexture{0.9, 0.9, 0.9}};
+  world.hitables.push_back(new Sphere{Vec3<>{0, -100.5, -1}, 100, new Lambertian{checker_texture}});
+  world.hitables.push_back(new Sphere{Vec3<>{0, 0, -1}, 0.5, new Lambertian{new ConstantTexture{0.8, 0.3, 0.3}}});
   world.hitables.push_back(new Sphere{Vec3<>{1, 0, -1}, 0.5, new Metal{0.8, 0.8, 0.0, 0.3}});
   world.hitables.push_back(new Sphere{Vec3<>{-1, 0, -1}, 0.5, new Dielectric{1.5}});
   

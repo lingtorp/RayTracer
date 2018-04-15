@@ -3,6 +3,7 @@
 
 #include <random>
 #include "hitable.h"
+#include "texture.h"
 
 class Material {
 public:
@@ -11,14 +12,13 @@ public:
 
 class Lambertian: public Material {
 public:
-  Vec3<> albedo;
-  Lambertian(double r, double g, double b): albedo{r, g, b} {};
-  explicit Lambertian(const Vec3<>& albedo): albedo{albedo} {};
+  Texture* albedo;
+  explicit Lambertian(Texture* texture): albedo{texture} {};
   
   bool scatter(const Ray& r, const Hit& hit, Vec3<>& attenuation, Ray& scattered) const override {
     Vec3<> target = hit.p + hit.normal + random_in_unit_sphere();
     scattered = Ray{hit.p, target - hit.p};
-    attenuation = albedo;
+    attenuation = albedo->value(0, 0, hit.p);
     return true;
   }
 };
