@@ -64,6 +64,11 @@ void thread_work(const World& world, const Camera& cam, uint32_t* pixels, int ns
 int main() {
   SDL_Init(SDL_INIT_EVERYTHING);
 
+  // Setup random generator state for Linux
+#ifdef __LINUX__
+  init_random_generator();
+#endif
+
   const size_t nx = 400;
   const size_t ny = 200;
   const size_t ns = 10; // Number of samples per px
