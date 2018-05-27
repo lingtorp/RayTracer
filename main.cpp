@@ -69,8 +69,8 @@ int main() {
   init_random_generator();
 #endif
 
-  const size_t nx = 400;
-  const size_t ny = 200;
+  const size_t nx = 720;
+  const size_t ny = 400;
   const size_t ns = 10; // Number of samples per px
   Vec3<> lookfrom = {3, 3, 2};
   Vec3<> lookat = {0, 0, -1};
