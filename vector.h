@@ -13,6 +13,18 @@ struct Vec3 {
   
   /// Operators
   inline Vec3<T> operator-() const { return Vec3<T>{-x, -y, -z}; }
+  inline T operator[](size_t i) const {
+    switch (i) { // Hopefully optimised into a jump table
+      case 0:
+        return x;
+      case 1:
+        return y;
+      case 2:
+        return z;
+      default:
+        return T{};
+    }
+  };
   
   inline double length() const { return std::sqrt(x*x + y*y + z*z); }
   inline double squared_length() const { return x*x + y*y + z*z; }

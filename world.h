@@ -6,19 +6,17 @@
 
 struct World {
   std::vector<Hitable*> hitables;
+  BVHNode bvh;
   
   World() = default;
   
+  /// Called whenever the world should not change and just render
+  void bake_world() {
+    bvh = BVHNode{hitables.data(), hitables.size(), 0.0, 0.0};
+  }
+  
   bool hit(const Ray& r, double t_min, double t_max, Hit& hit) const {
-    bool hit_anything = false;
-    double closest_so_far = t_max;
-    for (auto& hitable : hitables) {
-      if (hitable->hit(r, t_min, closest_so_far, hit)) {
-        closest_so_far = hit.t;
-        hit_anything = true;
-      }
-    }
-    return hit_anything;
+    return bvh.hit(r, t_min, t_max, hit);
   }
 };
 

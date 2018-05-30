@@ -40,6 +40,11 @@ public:
     }
     return false; // Missed sphere
   }
+  
+  bool bounding_box(double t0, double t1, AABB& box) const override {
+    box = AABB{center - Vec3<>{radius}, center + Vec3<>{radius}};
+    return true;
+  }
 };
 
 #endif // RAYTRACER_SPHERE_H
