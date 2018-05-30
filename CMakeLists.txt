@@ -9,6 +9,8 @@ if (UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread") # pthread for Linux
 endif(UNIX)
 
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg") # Profiling with gprof
+
 add_executable(RayTracer main.cpp vector.h hitable.h sphere.h world.h camera.h material.h random.h texture.h)
 
 find_package(SDL2 REQUIRED)
