@@ -95,10 +95,10 @@ struct Ray {
   Ray(Vec3<> a, Vec3<> b): A(a), B(b) {};
   
   /// Operators
-  Vec3<> operator()(double t) const { return A + t * B; }
+  inline Vec3<> operator()(double t) const { return A + t * B; }
   
-  Vec3<> origin() const { return A; };
-  Vec3<> direction() const { return B; };
+  inline const Vec3<>& origin() const { return A; };
+  inline const Vec3<>& direction() const { return B; };
   
 };
 
