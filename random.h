@@ -6,7 +6,7 @@
 #elif __LINUX__
 // TODO: Implement
 #else
-#include <stdlib.h>
+#include <cstdlib>
 
 thread_local drand48_data* random_state;
 
