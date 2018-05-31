@@ -111,6 +111,7 @@ void thread_work(ThreadArgs args) {
       }
     }
   }
+  args.sem_done.post();
 }
 
 int main() {
@@ -152,21 +153,15 @@ int main() {
     regions.emplace_back(Region{nx, ny, 0, nx, i * num_rows, (i + 1) * num_rows});
   }
   Semaphore sem{0};
+  Semaphore sem_done{0};
   sem.post(regions.size());
   for (size_t i = 0; i < num_threads; i++) {
-    ThreadArgs args{world, cam, pixels, ns, regions, sem};
+    ThreadArgs args{world, cam, pixels, ns, regions, sem, sem_done};
     threads.emplace_back(std::thread{thread_work, args});
   }
-  for (size_t i = 0; i < num_threads; i++) {
-    threads[i].join();
-  }
-  auto end = std::chrono::high_resolution_clock::now();
-  auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-  std::cout << diff << " ms, " << (ns*nx*ny)/(diff/1000.0) << " rays/s" << std::endl;
-  
-  SDL_UpdateWindowSurface(window);
   
   bool quit = false;
+  bool finished = false;
   while (!quit) {
     SDL_Event event{};
     while (SDL_PollEvent(&event)) {
@@ -175,7 +170,16 @@ int main() {
           break;
       }
     }
+    SDL_UpdateWindowSurface(window);
+    
+    if (sem_done.get_value() == num_threads && !finished) {
+      finished = true;
+      auto end = std::chrono::high_resolution_clock::now();
+      auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+      std::cout << " - " << diff << " ms, " << (ns*nx*ny)/(diff/1000.0) << " rays/s" << std::endl;
+    }
   }
-  
-  return 0;
+  // FIXME: No way to async terminate a thread (except via pthread APIs).
+  for (auto& t : threads) { t.join(); }
+  return EXIT_SUCCESS;
 }
