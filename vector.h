@@ -4,6 +4,42 @@
 #include <complex>
 
 template<typename T = double>
+struct Vec2 {
+  T x, y;
+  Vec2(T x, T y): x(x), y(y) {};
+  Vec2(): x(0.0), y(0.0) {};
+  
+  /// Sum of the components of the vector
+  inline T sum() const { return x + y; }
+  
+  /// Floors the components and returns a copy
+  inline Vec2<T> floor() const { return {std::floor(x), std::floor(y)}; }
+  
+  /// Dot product
+  inline T dot(Vec2<T> u) const { return x * u.x + y * u.y; }
+  
+  /// Operators
+  Vec2<T> operator+(const Vec2 &rhs) const { return {x + rhs.x, y + rhs.y}; }
+  
+  Vec2<T> operator-(const Vec2 &rhs) const { return {x - rhs.x, y - rhs.y}; }
+  
+  bool operator==(const Vec2 &rhs) const { return x == rhs.x && y == rhs.y; }
+  
+  /// Returns a copy of this vector normalized
+  inline Vec2<T> normalized() const { auto lng = length(); return {x / lng, y / lng}; }
+  
+  /// Normalisation in place
+  inline void normalize() { auto lng = length(); x /= lng; y /= lng; }
+  
+  /// Length of the vector
+  inline double length() const { return std::sqrt(std::pow(x, 2) + std::pow(y, 2)); }
+  
+  friend std::ostream &operator<<(std::ostream& os, const Vec2<> &v) {
+    return os << "(x:" << v.x << " y:" << v.y << ")";
+  }
+};
+
+template<typename T = double>
 struct Vec3 {
   T x, y, z;
   
@@ -26,10 +62,20 @@ struct Vec3 {
     }
   };
   
+  /// Element wide operators
+  inline bool operator==(T rhs) const { return x == rhs && y == rhs && z == rhs; }
+  inline bool operator<=(T rhs) const { return x <= rhs && y <= rhs && z <= rhs; }
+  
+  Vec3<T> floor() const { return {std::floor(x), std::floor(y), std::floor(z)}; }
+  inline double sum() const { return x + y + z; }
   inline double length() const { return std::sqrt(x*x + y*y + z*z); }
   inline double squared_length() const { return x*x + y*y + z*z; }
   inline void normalize() { auto lng = length(); x /= lng; y /= lng; z /= lng; }
   inline Vec3<T> normalized() const { auto lng = length(); return {x / lng, y / lng, z / lng}; }
+  
+  friend std::ostream &operator<<(std::ostream& os, const Vec3<>& v) {
+    return os << "(x:" << v.x << " y:" << v.y << " z:" << v.z << ")";
+  }
 };
 
 /// Vec3 operators
