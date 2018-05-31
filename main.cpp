@@ -71,10 +71,16 @@ struct Region {
 struct ThreadArgs {
   const World& world;
   const Camera& cam;
+  /// Screen buffer
   uint32_t* pixels;
+  /// Number of samples per pixels
   int ns;
+  /// All work items (a.k.a Regions of the screen)
   const std::vector<Region>& regions;
+  /// Number of work items remaining
   Semaphore& sem;
+  /// Number of threads done
+  Semaphore& sem_done;
 };
 
 void thread_work(ThreadArgs args) {
