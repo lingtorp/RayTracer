@@ -84,7 +84,7 @@ int main() {
   World world;
   auto checker_texture = new CheckerTexture{new ConstantTexture{0.2, 0.3, 0.1}, new ConstantTexture{0.9, 0.9, 0.9}};
   world.hitables.push_back(new Sphere{Vec3<>{0, -100.5, -1}, 100, new Lambertian{checker_texture}});
-  world.hitables.push_back(new Sphere{Vec3<>{0, 0, -1}, 0.5, new Lambertian{new ConstantTexture{0.8, 0.3, 0.3}}});
+  world.hitables.push_back(new Sphere{Vec3<>{0, 0, -1}, 0.5, new Lambertian{new PerlinTexture{}}});
   world.hitables.push_back(new Sphere{Vec3<>{1, 0, -1}, 0.5, new Metal{0.8, 0.8, 0.0, 0.3}});
   world.hitables.push_back(new Sphere{Vec3<>{-1, 0, -1}, 0.5, new Dielectric{1.5}});
   world.bake_world();
@@ -111,8 +111,7 @@ int main() {
   while (!quit) {
     SDL_Event event{};
     while (SDL_PollEvent(&event)) {
-      switch (event.type) {
-        case SDL_QUIT:
+      if (event.key.keysym.sym == SDLK_ESCAPE || event.type == SDL_QUIT) {
           quit = true;
           break;
       }
