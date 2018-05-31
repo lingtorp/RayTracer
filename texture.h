@@ -2,6 +2,7 @@
 #define RAYTRACER_TEXTURE_H
 
 #include "vector.h"
+#include "Procedural-Noise/noise.hpp"
 
 class Texture {
 public:
@@ -12,7 +13,7 @@ class ConstantTexture : public Texture {
 public:
   Vec3<> rgb;
   ConstantTexture(double r, double g, double b): rgb{r, g, b} {}
-  ConstantTexture(Vec3<> rgb_color): rgb{rgb_color} {}
+  explicit ConstantTexture(Vec3<> rgb_color): rgb{rgb_color} {}
   
   Vec3<> value(double u, double v, const Vec3<> &p) const override {
     return rgb;
@@ -32,6 +33,20 @@ public:
     } else {
       return tex1->value(u, v, p);
     }
+  }
+};
+
+class PerlinTexture : public Texture {
+  Perlin::Original noise_gen;
+public:
+  PerlinTexture(): noise_gen{1337} {};
+  Vec3<> value(double u, double v, const Vec3<> &p) const override {
+    const uint32_t zoom_factor = 128;
+    Vec3<> color = Vec3<>{noise_gen.fbm(1000 * p, zoom_factor)};
+    if (color <= 0.05) {
+      return Vec3<>{0.05, 0.05, 0.05};
+    }
+    return color;
   }
 };
 
