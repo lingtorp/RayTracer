@@ -73,28 +73,41 @@ struct Region {
   size_t y0, y1;
 };
 
-void thread_work(const World& world, const Camera& cam, uint32_t* pixels, int ns, Region reg) {
-  for (size_t j = reg.y0; j <= reg.y1; j++) {
-    for (size_t i = reg.x0; i <= reg.x1; i++) {
-      Vec3<> t_color{};
-      for (int s = 0; s < ns; s++) {
-        double u = double(i + drand48()) / double(reg.nx);
-        double v = double(j + drand48()) / double(reg.ny);
-        Ray r = cam.get_ray(u, v);
-        t_color += color(r, world, 0);
+struct ThreadArgs {
+  const World& world;
+  const Camera& cam;
+  uint32_t* pixels;
+  int ns;
+  const std::vector<Region>& regions;
+  Semaphore& sem;
+};
+
+void thread_work(ThreadArgs args) {
+  size_t row = 0;
+  while (args.sem.try_wait(&row)) {
+    const Region& reg = args.regions[row];
+    for (size_t j = reg.y0; j <= reg.y1; j++) {
+      for (size_t i = reg.x0; i <= reg.x1; i++) {
+        Vec3<> t_color{};
+        for (int s = 0; s < args.ns; s++) {
+          double u = double(i + drand48()) / double(reg.nx);
+          double v = double(j + drand48()) / double(reg.ny);
+          Ray r = args.cam.get_ray(u, v);
+          t_color += color(r, args.world, 0);
+        }
+        t_color /= double(args.ns);
+        t_color = {std::sqrt(t_color.x), std::sqrt(t_color.y), std::sqrt(t_color.z)}; // Gamma-2 correction
+        auto ir = uint32_t(t_color.x * 255);
+        auto ig = uint32_t(t_color.y * 255);
+        auto ib = uint32_t(t_color.z * 255);
+        auto ia = uint32_t(1);
+        uint32_t pixel = 0;
+        pixel += (ia << (8 * 3));
+        pixel += (ir << (8 * 2));
+        pixel += (ig << (8 * 1));
+        pixel += (ib << (8 * 0));
+        args.pixels[((reg.ny - j) * reg.nx) + i] = pixel;
       }
-      t_color /= double(ns);
-      t_color = {std::sqrt(t_color.x), std::sqrt(t_color.y), std::sqrt(t_color.z)}; // Gamma-2 correction
-      auto ir = uint32_t(t_color.x * 255);
-      auto ig = uint32_t(t_color.y * 255);
-      auto ib = uint32_t(t_color.z * 255);
-      auto ia = uint32_t(1);
-      uint32_t pixel = 0;
-      pixel += (ia << (8 * 3));
-      pixel += (ir << (8 * 2));
-      pixel += (ig << (8 * 1));
-      pixel += (ib << (8 * 0));
-      pixels[((reg.ny - j) * reg.nx) + i] = pixel;
     }
   }
 }
@@ -102,14 +115,14 @@ void thread_work(const World& world, const Camera& cam, uint32_t* pixels, int ns
 int main() {
   SDL_Init(SDL_INIT_EVERYTHING);
 
-  // Setup random generator state for Linux
 #ifdef __LINUX__
   init_random_generator();
 #endif
 
   const size_t nx = 720;
   const size_t ny = 400;
-  const size_t ns = 10; // Number of samples per px
+  const size_t ns = 100; // Number of samples per pixel
+  std::cout << "Resolution " << nx << "x" << ny << std::endl;
   Vec3<> lookfrom = {3, 3, 2};
   Vec3<> lookat = {0, 0, -1};
   double dist_to_focus = (lookfrom - lookat).length();
@@ -131,10 +144,17 @@ int main() {
   std::cout << "Starting " << num_threads << " number of threads." << std::endl;
   std::vector<std::thread> threads{};
   auto start = std::chrono::high_resolution_clock::now();
+  std::vector<Region> regions{};
+  const size_t num_rows = ny / num_threads;
+  std::cout << " - Number of rows per thread: " << num_rows << std::endl;
+  for (size_t i = 0; i < size_t(ny / num_rows); i++) {
+    regions.emplace_back(Region{nx, ny, 0, nx, i * num_rows, (i + 1) * num_rows});
+  }
+  Semaphore sem{0};
+  sem.post(regions.size());
   for (size_t i = 0; i < num_threads; i++) {
-    const size_t num_rows = ny / num_threads;
-    Region reg{nx, ny, 0, nx, i * num_rows, (i + 1) * num_rows};
-    threads.emplace_back(std::thread{thread_work, world, cam, pixels, ns, reg});
+    ThreadArgs args{world, cam, pixels, ns, regions, sem};
+    threads.emplace_back(std::thread{thread_work, args});
   }
   for (size_t i = 0; i < num_threads; i++) {
     threads[i].join();
