@@ -31,11 +31,6 @@ public:
     return value;
   }
   
-  bool peek() {
-    std::unique_lock<std::mutex> lk(mut);
-    return value != 0;
-  }
-  
   bool try_wait(size_t* val) {
     std::unique_lock<std::mutex> lk(mut);
     if (value == 0) {
