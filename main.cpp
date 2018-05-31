@@ -5,11 +5,49 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_video.h>
 #include <thread>
+#include <mutex>
 #include "vector.h"
 #include "world.h"
 #include "sphere.h"
 #include "camera.h"
 #include "material.h"
+
+/// Semaphore
+struct Semaphore {
+private:
+  size_t value = 0;
+  std::mutex mut;
+
+public:
+  explicit Semaphore(size_t val): value(val) {}
+  
+  void post(size_t val = 1) {
+    std::unique_lock<std::mutex> lk(mut);
+    value += val;
+  }
+  
+  size_t get_value() {
+    std::unique_lock<std::mutex> lk(mut);
+    return value;
+  }
+  
+  bool peek() {
+    std::unique_lock<std::mutex> lk(mut);
+    return value != 0;
+  }
+  
+  bool try_wait(size_t* val) {
+    std::unique_lock<std::mutex> lk(mut);
+    if (value == 0) {
+      *val = value;
+      return false;
+    } else {
+      value--;
+      *val = value;
+      return true;
+    }
+  }
+};
 
 /// dot((p(t) - c, p(t) - c)) = R*R sphere equation in vector form
 Vec3<> color(const Ray& r, const World& world, int depth) {
