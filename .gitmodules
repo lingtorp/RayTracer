@@ -1,0 +1,3 @@
+[submodule "Procedural-Noise"]
+	path = Procedural-Noise
+	url = git@github.com:Entalpi/Procedural-Noise.git
