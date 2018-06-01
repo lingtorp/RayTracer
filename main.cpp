@@ -50,10 +50,11 @@ Vec3<> color(const Ray& r, const World& world, int depth) {
   if (world.hit(r, 0.001, MAXFLOAT, hit)) {
     Ray scattered;
     Vec3<> attenuation;
-    if (depth < 50 && hit.mat->scatter(r, hit, attenuation, scattered)) {
-      return attenuation*color(scattered, world, depth + 1);
+    Vec3<> emission = hit.mat->emitted(0.0, 0.0, hit.p);
+    if (depth < 5 && hit.mat->scatter(r, hit, attenuation, scattered)) {
+      return emission + attenuation*color(scattered, world, depth + 1);
     } else {
-      return Vec3<>{0.0};
+      return emission;
     }
   } else {
     Vec3<> dir = r.direction().normalized();
@@ -140,6 +141,7 @@ int main() {
   world.hitables.push_back(new Sphere{Vec3<>{0, 0, -1}, 0.5, new Lambertian{new PerlinTexture{}}});
   world.hitables.push_back(new Sphere{Vec3<>{1, 0, -1}, 0.5, new Metal{0.8, 0.8, 0.0, 0.3}});
   world.hitables.push_back(new Sphere{Vec3<>{-1, 0, -1}, 0.5, new Dielectric{1.5}});
+  world.hitables.push_back(new Sphere{Vec3<>{0.5, 0.5, -1.5}, 0.2, new Emission{new ConstantTexture{1.0, 1.0, 1.0}}});
   world.bake_world();
   
   const size_t num_threads = std::thread::hardware_concurrency() == 0 ? 4 : std::thread::hardware_concurrency();

@@ -8,6 +8,9 @@
 class Material {
 public:
   virtual bool scatter(const Ray& r, const Hit& hit, Vec3<>& attenuation, Ray& scattered) const = 0;
+  virtual Vec3<> emitted(double u, double v, const Vec3<>& p) const {
+    return Vec3<>{0.0};
+  }
 };
 
 class Lambertian: public Material {
@@ -93,6 +96,22 @@ public:
       scattered = Ray{hit.p, refracted};
     }
     return true;
+  }
+};
+
+class Emission : public Material {
+private:
+  Texture *texture;
+  
+public:
+  explicit Emission(Texture *t): texture(t) {}
+  
+  bool scatter(const Ray &r, const Hit &hit, Vec3<> &attenuation, Ray &scattered) const override {
+    return false;
+  }
+  
+  Vec3<> emitted(double u, double v, const Vec3<> &p) const override {
+    return texture->value(u, v, p);
   }
 };
 
