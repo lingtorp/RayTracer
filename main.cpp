@@ -45,13 +45,13 @@ public:
 };
 
 /// dot((p(t) - c, p(t) - c)) = R*R sphere equation in vector form
-Vec3<> color(const Ray& r, const World& world, int depth) {
+Vec3<> color(const Ray& r, const World& world, const int depth) {
   Hit hit;
   if (world.hit(r, 0.001, MAXFLOAT, hit)) {
     Ray scattered;
     Vec3<> attenuation;
     Vec3<> emission = hit.mat->emitted(0.0, 0.0, hit.p);
-    if (depth < 5 && hit.mat->scatter(r, hit, attenuation, scattered)) {
+    if (depth < 50 && hit.mat->scatter(r, hit, attenuation, scattered)) {
       return emission + attenuation*color(scattered, world, depth + 1);
     } else {
       return emission;
@@ -124,9 +124,9 @@ int main() {
 
   const size_t nx = 720;
   const size_t ny = 400;
-  const size_t ns = 100; // Number of samples per pixel
+  const size_t ns = 10; // Number of samples per pixel
   std::cout << "Resolution " << nx << "x" << ny << std::endl;
-  Vec3<> lookfrom = {3, 3, 2};
+  Vec3<> lookfrom = {15, 10, 2};
   Vec3<> lookat = {0, 0, -1};
   double dist_to_focus = (lookfrom - lookat).length();
   Camera cam{lookfrom, lookat, 20, double(nx) / double(ny), 0.1, dist_to_focus};
@@ -136,12 +136,8 @@ int main() {
   uint32_t* pixels = (uint32_t*) scr->pixels;
 
   World world;
-  auto checker_texture = new CheckerTexture{new ConstantTexture{0.2, 0.3, 0.1}, new ConstantTexture{0.9, 0.9, 0.9}};
-  world.hitables.push_back(new Sphere{Vec3<>{0, -100.5, -1}, 100, new Lambertian{checker_texture}});
-  world.hitables.push_back(new Sphere{Vec3<>{0, 0, -1}, 0.5, new Lambertian{new PerlinTexture{}}});
-  world.hitables.push_back(new Sphere{Vec3<>{1, 0, -1}, 0.5, new Metal{0.8, 0.8, 0.0, 0.3}});
-  world.hitables.push_back(new Sphere{Vec3<>{-1, 0, -1}, 0.5, new Dielectric{1.5}});
-  world.hitables.push_back(new Sphere{Vec3<>{0.5, 0.5, -1.5}, 0.2, new Emission{new ConstantTexture{1.0, 1.0, 1.0}}});
+  // world.scene_default();
+  world.simple_light_scene();
   world.bake_world();
   
   const size_t num_threads = std::thread::hardware_concurrency() == 0 ? 4 : std::thread::hardware_concurrency();
@@ -171,6 +167,15 @@ int main() {
           quit = true;
           break;
       }
+      switch (event.type) {
+        case SDL_KEYDOWN:
+          switch (event.key.keysym.sym) {
+            case SDLK_a:
+              // TODO: Camera movemments
+              break;
+          }
+          break;
+      }
     }
     SDL_UpdateWindowSurface(window);
     
@@ -178,7 +183,7 @@ int main() {
       finished = true;
       auto end = std::chrono::high_resolution_clock::now();
       auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-      std::cout << " - " << diff << " ms, " << (ns*nx*ny)/(diff/1000.0) << " rays/s" << std::endl;
+      std::cout << " - " << diff << " ms, " << (ns*nx*ny)/(diff/1000.0)/1'000'000 << " Mrays/s" << std::endl;
     }
   }
   // FIXME: No way to async terminate a thread (except via pthread APIs).

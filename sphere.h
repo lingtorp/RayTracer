@@ -47,4 +47,31 @@ public:
   }
 };
 
+class Rectxy : public Hitable {
+public:
+  Material* mat = nullptr;
+  double x0, x1, y0, y1, k;
+  Rectxy(double x0, double x1, double y0, double y1, double k, Material* mat):
+          x0(x0), x1(x1), y0(y0), y1(y1), k(k), mat(mat) {}
+  
+  bool hit(const Ray &r, double t_min, double t_max, Hit &hit) const override {
+    float t = (k - r.origin().z) / r.direction().z;
+    if (t < t_min || t > t_max) { return false; }
+    const float x = r.origin().x + r.direction().x * t;
+    const float y = r.origin().y + r.direction().y * t;
+    if (x < x0 || x > x1 || y < y0 || y > y1) { return false; }
+    
+    hit.t = t;
+    hit.mat = mat;
+    hit.p = r(t);
+    hit.normal = Vec3<>{0, 0, 1};
+    return false;
+  }
+  
+  bool bounding_box(double t0, double t1, AABB &box) const override {
+    box = AABB{Vec3<>{x0, y0, k - 0.0001}, Vec3<>{x1, y1, k + 0.0001}};
+    return true;
+  }
+};
+
 #endif // RAYTRACER_SPHERE_H

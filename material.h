@@ -7,7 +7,9 @@
 
 class Material {
 public:
+  /// Reflected ray
   virtual bool scatter(const Ray& r, const Hit& hit, Vec3<>& attenuation, Ray& scattered) const = 0;
+  /// Emitted color
   virtual Vec3<> emitted(double u, double v, const Vec3<>& p) const {
     return Vec3<>{0.0};
   }

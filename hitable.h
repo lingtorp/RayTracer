@@ -90,7 +90,6 @@ public:
   Hitable* left  = nullptr;
   Hitable* right = nullptr;
   AABB aabb;  // Box surrounding the nodes
-  BVHNode() = default;
   BVHNode(Hitable** l, uint64_t n, double time0, double time1) {
     int axis = int(3*rand_s(1.0));
     if (axis == 0) {
@@ -114,7 +113,7 @@ public:
     }
     aabb = AABB::surrounding_box(box_left, box_right);
   };
-
+  
   bool hit(const Ray &r, double t_min, double t_max, Hit& hit) const override {
     if (aabb.hit(r, t_min, t_max)) {
       Hit left_hit, right_hit;
