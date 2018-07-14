@@ -2,7 +2,7 @@
 #define RAYTRACER_TEXTURE_H
 
 #include "vector.h"
-#include "Procedural-Noise/noise.hpp"
+#include "include/noise.h"
 
 class Texture {
 public:

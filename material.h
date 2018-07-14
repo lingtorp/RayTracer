@@ -23,7 +23,7 @@ public:
   bool scatter(const Ray& r, const Hit& hit, Vec3<>& attenuation, Ray& scattered) const override {
     Vec3<> target = hit.p + hit.normal + random_in_unit_sphere();
     scattered = Ray{hit.p, target - hit.p};
-    attenuation = albedo->value(0, 0, hit.p);
+    attenuation = albedo->value(hit.u, hit.v, hit.p);
     return true;
   }
 };
@@ -103,10 +103,10 @@ public:
 
 class Emission : public Material {
 private:
-  Texture *texture;
+  Texture* texture;
   
 public:
-  explicit Emission(Texture *t): texture(t) {}
+  explicit Emission(Texture* t): texture(t) {}
   
   bool scatter(const Ray &r, const Hit &hit, Vec3<> &attenuation, Ray &scattered) const override {
     return false;

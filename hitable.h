@@ -36,6 +36,8 @@ struct AABB {
 struct Hit {
   double t = 0.0;
   Vec3<> p{}; // Position
+  double u = 0.0;
+  double v = 0.0;
   Vec3<> normal{};
   Material* mat = nullptr;
 };
