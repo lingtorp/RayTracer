@@ -1,3 +1,0 @@
-/home/lingtorp/repos/RayTracer/cmake-build-relwithdebinfo/CMakeFiles/edit_cache.dir
-/home/lingtorp/repos/RayTracer/cmake-build-relwithdebinfo/CMakeFiles/rebuild_cache.dir
-/home/lingtorp/repos/RayTracer/cmake-build-relwithdebinfo/CMakeFiles/RayTracer.dir
