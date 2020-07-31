@@ -1,14 +1,13 @@
-#include <iostream>
 #include "random.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_video.h>
-#include <thread>
-#include <mutex>
 #include "vector.h"
 #include "world.h"
 #include "sphere.h"
 #include "camera.h"
 #include "material.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_video.h>
+#include <thread>
+#include <mutex>
 
 /// Semaphore
 struct Semaphore {
@@ -42,12 +41,12 @@ public:
   }
 };
 
-Vec3<> color(const Ray& r, const World& world, const int depth) {
+Vec3f color(const Ray& r, const World& world, const int depth) {
   Hit hit;
   if (world.hit(r, 0.001, MAXFLOAT, hit)) {
     Ray scattered;
-    Vec3<> attenuation;
-    Vec3<> emission = hit.mat->emitted(hit.u, hit.v, hit.p);
+    Vec3f attenuation;
+    Vec3f emission = hit.mat->emitted(0.0, 0.0, hit.p);
     if (depth < 50 && hit.mat->scatter(r, hit, attenuation, scattered)) {
       // TODO: Shadow rays
       return emission + attenuation*color(scattered, world, depth + 1);
@@ -55,10 +54,10 @@ Vec3<> color(const Ray& r, const World& world, const int depth) {
       return emission;
     }
   } else {
-    return Vec3<>{0.0};
-    Vec3<> dir = r.direction().normalized();
-    double t = 0.5*(dir.y + 1.0);
-    return (1.0 - t) * Vec3<>{1.0, 1.0, 1.0} + t * Vec3<>{0.5, 0.7, 1.0};
+    // return Vec3f{0.0};
+    Vec3f dir = r.direction().normalized();
+    float t = 0.5*(dir.y + 1.0);
+    return (1.0 - t) * Vec3f{1.0, 1.0, 1.0} + t * Vec3f{0.5, 0.7, 1.0};
   }
 }
 
@@ -89,20 +88,20 @@ void thread_work(ThreadArgs args) {
     const Region& reg = args.regions[row];
     for (size_t j = reg.y0; j <= reg.y1; j++) {
       for (size_t i = reg.x0; i <= reg.x1; i++) {
-        Vec3<> t_color{};
+        Vec3f t_color;
         for (int s = 0; s < args.ns; s++) {
-          double u = double(i + drand48()) / double(reg.nx);
-          double v = double(j + drand48()) / double(reg.ny);
+          float u = float(i + rand_0_1()) / float(reg.nx);
+          float v = float(j + rand_0_1()) / float(reg.ny);
           Ray r = args.cam.get_ray(u, v);
           t_color += color(r, args.world, 0);
         }
-        if (t_color == NAN) { std::cerr << "NAN" << std::endl; }
-        if (t_color == INFINITY) { std::cerr << "INF" << std::endl; }
-        t_color /= double(args.ns);
+        // if (t_color == NAN) { std::cerr << "NAN" << std::endl; }
+        // if (t_color == INFINITY) { std::cerr << "INF" << std::endl; }
+        t_color /= float(args.ns);
         t_color = {std::sqrt(t_color.x), std::sqrt(t_color.y), std::sqrt(t_color.z)}; // Gamma-2 correction
-        auto ir = uint32_t(t_color.x * 255);
-        auto ig = uint32_t(t_color.y * 255);
-        auto ib = uint32_t(t_color.z * 255);
+        auto ir = uint32_t(t_color.x * 255.99f);
+        auto ig = uint32_t(t_color.y * 255.99f);
+        auto ib = uint32_t(t_color.z * 255.99f);
         auto ia = uint32_t(1);
         uint32_t pixel = 0;
         pixel += (ia << (8 * 3));
@@ -119,11 +118,9 @@ void thread_work(ThreadArgs args) {
 int main() {
   SDL_Init(SDL_INIT_EVERYTHING);
 
-#ifdef __LINUX__
   init_random_generator();
-#endif
 
-  const size_t nx = 720;
+  const size_t nx = 720; 
   const size_t ny = 400;
   const size_t ns = 10; // Number of samples per pixel
   
@@ -131,14 +128,14 @@ int main() {
   SDL_Surface* scr = SDL_GetWindowSurface(window);
   uint32_t* pixels = (uint32_t*) scr->pixels;
   
-  Vec3<> lookfrom = {-2, 2, 1};
-  Vec3<> lookat = {0, 0, -1};
-  double dist_to_focus = (lookfrom - lookat).length();
-  Camera cam{lookfrom, lookat, 60, double(nx) / double(ny), 0.1, dist_to_focus};
+  Vec3f lookfrom = {13, 2, 3};
+  Vec3f lookat = {0, 0, 0};
+  float dist_to_focus = (lookfrom - lookat).length();
+  float aperature = 0.0;
+  Camera cam{lookfrom, lookat, 20, nx / ny, aperature, dist_to_focus};
   
   World world;
-  world.default_scene();
-  world.bake_world();
+  world.simple_light();
   
   const size_t num_threads = std::thread::hardware_concurrency() == 0 ? 4 : std::thread::hardware_concurrency();
   std::cout << "Starting " << num_threads << " number of threads." << std::endl;
@@ -147,9 +144,11 @@ int main() {
   std::vector<Region> regions{};
   const size_t num_rows = ny / num_threads;
   std::cout << " - Number of rows per thread: " << num_rows << std::endl;
+
   for (size_t i = 0; i < size_t(ny / num_rows); i++) {
     regions.emplace_back(Region{nx, ny, 0, nx, i * num_rows, (i + 1) * num_rows});
   }
+
   Semaphore sem{0};
   Semaphore sem_done{0};
   sem.post(regions.size());

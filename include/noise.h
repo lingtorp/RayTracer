@@ -17,20 +17,20 @@
 class Noise {
 public:
   /// 2D raw noise from the underlying noise algorithm
-  virtual double get_value(double x, double y) const = 0;
+  virtual float get_value(float x, float y) const = 0;
   
   /// 3D raw noise from the underlying noise algorithm
-  virtual double get_value(double x, double y, double z) const = 0;
+  virtual float get_value(float x, float y, float z) const = 0;
   
   // FIXME: Is turbulence like defined here really from the original Perlin patent?
   // FIXME: Is it a visually useful effect?
   /// 3D turbulence noise which simulates fBm
-  double turbulence(double x, double y, double zoom_factor) const {
-    double value = 0;
-    double zoom = zoom_factor;
-    while (zoom >= 1.0) {
+  float turbulence(float x, float y, float zoom_factor) const {
+    float value = 0.0f;
+    float zoom = zoom_factor;
+    while (zoom >= 1.0f) {
       value += std::abs(get_value(x / zoom, y / zoom) * zoom);
-      zoom /= 2;
+      zoom /= 2.0f;
     }
     return value / zoom_factor;
   }
@@ -39,66 +39,66 @@ public:
   // FIXME: Is it a visually useful effect?
   /// 3D turbulence noise which simulates fBm
   /// Reference: http://lodev.org/cgtutor/randomnoise.html & orignal Perlin noise paper
-  double turbulence(double x, double y, double z, double zoom_factor) const {
-    double value = 0;
-    double zoom = zoom_factor;
-    while (zoom >= 1.0) {
+  float turbulence(float x, float y, float z, float zoom_factor) const {
+    float value = 0.0f;
+    float zoom = zoom_factor;
+    while (zoom >= 1.0f) {
       value += std::abs(get_value(x / zoom, y / zoom, z / zoom) * zoom);
-      zoom /= 2;
+      zoom /= 2.0f;
     }
     return value / zoom_factor;
   }
   
   /// 2D turbulence noise which simulates fBm
-  double fbm(Vec2<double> v, double zoom_factor) const {
+  float fbm(Vec2f v, float zoom_factor) const {
     return fbm(v.x, v.y, zoom_factor);
   }
   
   /// 2D turbulence noise which simulates fBm
-  double fbm(double x, double y, double zoom_factor) const {
-    double value = 0;
-    double zoom = zoom_factor;
-    while (zoom >= 1.0) {
+  float fbm(float x, float y, float zoom_factor) const {
+    float value = 0.0f;
+    float zoom = zoom_factor;
+    while (zoom >= 1.0f) {
       value += get_value(x / zoom, y / zoom) * zoom;
-      zoom /= 2;
+      zoom /= 2.0f;
     }
     return value / zoom_factor;
   }
   
   /// 3D turbulence noise which simulates fBm
-  double fbm(Vec3<double> v, double zoom_factor) const {
+  float fbm(Vec3f v, float zoom_factor) const {
     return fbm(v.x, v.y, v.z, zoom_factor);
   }
   
   /// 3D turbulence noise which simulates fBm
-  double fbm(double x, double y, double z, double zoom_factor) const {
-    double value = 0;
-    double zoom = zoom_factor;
-    while (zoom >= 1.0) {
+  float fbm(float x, float y, float z, float zoom_factor) const {
+    float value = 0.0f;
+    float zoom = zoom_factor;
+    while (zoom >= 1.0f) {
       value += get_value(x / zoom, y / zoom, z / zoom) * zoom;
-      zoom /= 2;
+      zoom /= 2.0f;
     }
     return value / zoom_factor;
   }
   
   /// 3D Billowy turbulence
-  double turbulence_billowy(double x, double y, double z, double zoom_factor) const {
-    double value = 0;
-    double zoom = zoom_factor;
-    while (zoom >= 1.0) {
+  float turbulence_billowy(float x, float y, float z, float zoom_factor) const {
+    float value = 0.0f;
+    float zoom = zoom_factor;
+    while (zoom >= 1.0f) {
       value += std::abs(get_value(x / zoom, y / zoom, z / zoom) * zoom);
-      zoom /= 2;
+      zoom /= 2.0f;
     }
     return value / zoom_factor;
   }
   
   /// 3D Ridged turbulence
-  double turbulence_ridged(double x, double y, double z, double zoom_factor) const {
-    double value = 0;
-    double zoom = zoom_factor;
-    while (zoom >= 1.0) {
+  float turbulence_ridged(float x, float y, float z, float zoom_factor) const {
+    float value = 0.0f;
+    float zoom = zoom_factor;
+    while (zoom >= 1.0f) {
       value += (1.0f - std::abs(get_value(x / zoom, y / zoom, z / zoom) * zoom));
-      zoom /= 2;
+      zoom /= 2.0f;
     }
     return value / zoom_factor;
   }
@@ -106,16 +106,16 @@ public:
   // FIXME: Octaves, is the implementation correct?
   // FIXME: Visually pleasing effect?
   /// 2D fractional Brownian motion noise of the underlying noise algorithm
-  double octaves(double x, double y, int octaves, double persistance = 1.0, double amplitude = 1.0) const {
-    double total = 0.0;
-    double max_value = 0.0;
-    double frequency = 1.0;
+  float octaves(float x, float y, uint32_t octaves, float persistance = 1.0f, float amplitude = 1.0) const {
+    float total = 0.0f;
+    float max_value = 0.0f;
+    float frequency = 1.0f;
     for (size_t i = 0; i < octaves; ++i) {
       total += get_value(x / frequency, y / frequency) * amplitude;
       max_value += amplitude;
       
       amplitude *= persistance;
-      frequency *= 2;
+      frequency *= 2.0f;
     }
     
     // Dividing by the max amplitude sum brings it into [-1, 1] range
@@ -123,10 +123,10 @@ public:
   }
   
   /// 3D fractional Brownian motion noise of the underlying noise algorithm
-  double octaves(double x, double y, double z, int octaves, double persistance = 1.0, double amplitude = 1.0) const {
-    double total = 0.0;
-    double max_value = 0.0;
-    double frequency = 1.0;
+  float octaves(float x, float y, float z, uint32_t octaves, float persistance = 1.0f, float amplitude = 1.0) const {
+    float total = 0.0f;
+    float max_value = 0.0f;
+    float frequency = 1.0f;
     for (size_t i = 0; i < octaves; ++i) {
       total += get_value(x / frequency, y / frequency, z / frequency) * amplitude;
       max_value += amplitude;
@@ -140,11 +140,11 @@ public:
   }
   
   /// 3D fractional Brownian motion noise in which each octave gets its own amplitude
-  double octaves(double x, double y, double z, const std::vector<double> &amplitudes) const {
-    double total = 0.0;
-    double max_value = 0.0;
-    double frequency = 1.0;
-    for (double amplitude : amplitudes) {
+  float octaves(float x, float y, float z, const std::vector<float> &amplitudes) const {
+    float total = 0.0f;
+    float max_value = 0.0f;
+    float frequency = 1.0f;
+    for (float amplitude : amplitudes) {
       total += get_value(x / frequency, y / frequency, z / frequency) * amplitude;
       max_value += amplitude;
       frequency *= 2;
@@ -155,33 +155,33 @@ public:
   }
   
   /// Warps the domain of the noise function creating more natural looking features
-  double domain_wrapping(double x, double y, double z, double scale) const {
-    Vec3<double> p{x, y, z};
-    Vec3<double> offset{50.2, 10.3, 10.5};
+  float domain_wrapping(float x, float y, float z, float scale) const {
+    Vec3f p{x, y, z};
+    Vec3f offset{50.2f, 10.3f, 10.5f};
     
-    Vec3<double> q{fbm(p + offset, scale), fbm(p + offset, scale), fbm(p + offset, scale)};
-    Vec3<double> qq{100.0*q.x, 100.0*q.y, 100.0*q.z};
+    Vec3f q{fbm(p + offset, scale), fbm(p + offset, scale), fbm(p + offset, scale)};
+    Vec3f qq{100.0f*q.x, 100.0f*q.y, 100.0f*q.z};
     
     /// Adjusting the scales in r makes a cool ripple effect through the noise
-    Vec3<double> r{fbm(p + qq + Vec3<double>{1.7, 9.2, 5.1}, scale * 1),
-                   fbm(p + qq + Vec3<double>{8.3, 2.8, 2.5}, scale * 1),
-                   fbm(p + qq + Vec3<double>{1.2, 6.9, 8.4}, scale * 1)};
-    Vec3<double> rr{100.0*r.x, 100.0*r.y, 100.0*r.z};
+    Vec3f r{fbm(p + qq + Vec3f{1.7f, 9.2f, 5.1f}, scale * 1.0f),
+            fbm(p + qq + Vec3f{8.3f, 2.8f, 2.5f}, scale * 1.0f),
+            fbm(p + qq + Vec3f{1.2f, 6.9f, 8.4f}, scale * 1.0f)};
+    Vec3f rr{100.0f*r.x, 100.0f*r.y, 100.0f*r.z};
     
     return fbm(p + rr, scale);
   }
 
 protected:
-  static inline double clamp(double in, double lo, double hi) {
+  static inline float clamp(float in, float lo, float hi) {
     return std::max(lo, std::min(hi, in));
   }
   
   // TODO: Document
-  static inline double smoothstep(double t) { return t * t * (3 - 2 * t); }
+  static inline float smoothstep(float t) { return t * t * (3.0f - 2.0f * t); }
   // TODO: Document
-  static inline double quintic_fade(double t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+  static inline float quintic_fade(float t) { return t * t * t * (t * (t * 6.0f - 15.0f) + 10.0f); }
   /// Linear interpolation between a and b with t as a variable
-  static inline double lerp(double t, double a, double b) { return (1 - t) * a + t * b; }
+  static inline float lerp(float t, float a, float b) { return (1.0f - t) * a + t * b; }
 };
 
 namespace Simplex {
@@ -205,16 +205,16 @@ namespace Simplex {
     /********************************** Simplex 2D Noise **********************************/
     
     /// Skews the coordinate to normal Euclidean coordinate system
-    Vec2<double> skew(Vec2<double> v) const {
-      const double F = (std::sqrt(1.0 + 2.0) - 1.0) / 2.0;
-      double s = (v.x + v.y) * F;
+    Vec2f skew(Vec2f v) const {
+      const float F = (std::sqrt(1.0f + 2.0f) - 1.0f) / 2.0f;
+      float s = (v.x + v.y) * F;
       return {v.x + s, v.y + s};
     }
     
     /// Unskews the coordinate back to the simpletic coordinate system
-    Vec2<double> unskew(Vec2<double> v) const {
-      const double G = (1.0 - (1.0 / sqrt(2.0 + 1.0))) / 2.0;
-      double s = (v.x + v.y) * G;
+    Vec2f unskew(Vec2f v) const {
+      const float G = (1.0f - (1.0f / sqrt(2.0f + 1.0f))) / 2.0f;
+      float s = (v.x + v.y) * G;
       return {v.x - s, v.y - s};
     }
     
@@ -225,43 +225,43 @@ namespace Simplex {
     }
     
     /// Given a coordinate (i, j) generates a gradient vector
-    Vec2<double> grad(int i, int j) const {
+    Vec2f grad(int i, int j) const {
       uint32_t bit_sum = b(i, j, 0) + b(j, i, 1) + b(i, j, 2) + b(j, i, 3);
-      auto u = (bit_sum & 0b01) ? 1.0 : 0.0;
-      auto v = (bit_sum & 0b10) ? 1.0 : 0.0;
+      float u = (bit_sum & 0b01) ? 1.0f : 0.0f;
+      float v = (bit_sum & 0b10) ? 1.0f : 0.0f;
       u = (bit_sum & 0b1000) ? -u : u;
       v = (bit_sum & 0b0100) ? -v : v;
       return {u, v};
     }
     
-    // FIXME: Doublecheck against the patent
-    double get_value(double x, double y) const override {
+    // FIXME: Floatcheck against the patent
+    float get_value(float x, float y) const override {
       /// Skew
-      const double F = (std::sqrt(2.0 + 1.0) - 1.0) / 2.0;
-      double s = (x + y) * F;
-      double xs = x + s;
-      double ys = y + s;
+      const float F = (std::sqrt(2.0f + 1.0f) - 1.0f) / 2.0f;
+      float s = (x + y) * F;
+      float xs = x + s;
+      float ys = y + s;
       int i = (int) std::floor(xs);
       int j = (int) std::floor(ys);
       
       /// Unskew - find first vertex of the simplex
-      const double G = (3.0 - std::sqrt(2.0 + 1.0)) / 6.0;
-      double t = (i + j) * G;
-      Vec2<double> cell_origin{i - t, j - t};
-      Vec2<double> vertex_a = Vec2<double>{x, y} - cell_origin;
+      const float G = (3.0f - std::sqrt(2.0f + 1.0f)) / 6.0f;
+      float t = (i + j) * G;
+      Vec2f cell_origin{i - t, j - t};
+      Vec2f vertex_a = Vec2f{x, y} - cell_origin;
       
       // Figure out which vertex is next
-      auto x_step = 0;
-      auto y_step = 0;
+      float x_step = 0.0f;
+      float y_step = 0.0f;
       if (vertex_a.x > vertex_a.y) { // Lower triangle
-        x_step = 1;
+        x_step = 1.0f;
       } else {
-        y_step = 1;
+        y_step = 1.0f;
       }
       
-      // A change of one unit step is; x = x' + (x' + y') * G <--> x = 1.0 + (1.0 + 1.0) * G <--> x = 1.0 + 2.0 * G
-      Vec2<double> vertex_b{vertex_a.x - x_step + G, vertex_a.y - y_step + G};
-      Vec2<double> vertex_c{vertex_a.x - 1.0 + 2.0 * G, vertex_a.y - 1.0 + 2.0 * G};
+      // A change of one unit step is; x = x' + (x' + y') * G <--> x = 1.0f + (1.0 + 1.0) * G <--> x = 1.0 + 2.0 * G
+      Vec2f vertex_b{vertex_a.x - x_step + G, vertex_a.y - y_step + G};
+      Vec2f vertex_c{vertex_a.x - 1.0f + 2.0f * G, vertex_a.y - 1.0f + 2.0f * G};
       
       auto grad_a = grad(i, j);
       auto grad_b = grad(i + x_step, j + y_step);
@@ -269,25 +269,25 @@ namespace Simplex {
       
       /// Calculate contribution from the vertices in a circle
       // max(0, r^2 - d^2)^4 * gradient.dot(vertex)
-      const double radius = 0.6 * 0.6; // Radius of the surflet circle (0.6 in patent)
-      double sum = 0.0;
+      const float radius = 0.6f * 0.6f; // Radius of the surflet circle (0.6 in patent)
+      float sum = 0.0f;
       
-      double t0 = radius - vertex_a.length() * vertex_a.length();
-      if (t0 > 0) {
-        sum += std::pow(t0, 4) * grad_a.dot(vertex_a);
+      float t0 = radius - vertex_a.length() * vertex_a.length();
+      if (t0 > 0.0f) {
+        sum += std::pow(t0, 4.0f) * grad_a.dot(vertex_a);
       }
       
-      double t1 = radius - vertex_b.length() * vertex_b.length();
-      if (t1 > 0) {
-        sum += std::pow(t1, 4) * grad_b.dot(vertex_b);
+      float t1 = radius - vertex_b.length() * vertex_b.length();
+      if (t1 > 0.0f) {
+        sum += std::pow(t1, 4.0f) * grad_b.dot(vertex_b);
       }
       
-      double t2 = radius - vertex_c.length() * vertex_c.length();
-      if (t2 > 0) {
-        sum += std::pow(t2, 4) * grad_c.dot(vertex_c);
+      float t2 = radius - vertex_c.length() * vertex_c.length();
+      if (t2 > 0.0f) {
+        sum += std::pow(t2, 4.0f) * grad_c.dot(vertex_c);
       }
       
-      return 220.0 * sum;
+      return 220.0f * sum;
     }
     
     /********************************** Simplex 3D Noise **********************************/
@@ -304,7 +304,7 @@ namespace Simplex {
      * @param rel Relative vector of (x, y, z) and the vertex in the unskewed coordinate system.
      * @return Gradient vector
      */
-    Vec3<double> grad(Vec3<double> vertex, Vec3<double> rel) const {
+    Vec3f grad(Vec3f vertex, Vec3f rel) const {
       int i = (int) vertex.x;
       int j = (int) vertex.y;
       int k = (int) vertex.z;
@@ -312,7 +312,7 @@ namespace Simplex {
                 b(i, j, k, 6) + b(j, k, i, 7);
       
       // Magnitude computation based on the three lower bits of the bit sum
-      Vec3<double> pqr = rel;
+      Vec3f pqr = rel;
       if (bit(sum, 0) == !bit(sum, 1)) { // xor on bit 0, 1 --> rotation and zeroing
         if (bit(sum, 0)) { // Rotation
           pqr.x = rel.y;
@@ -325,15 +325,15 @@ namespace Simplex {
         }
         
         if (bit(sum, 2)) { // Zeroing out
-          pqr.y = 0.0;
+          pqr.y = 0.0f;
         } else {
-          pqr.z = 0.0;
+          pqr.z = 0.0f;
         }
       } else if (bit(sum, 0) && bit(sum, 1)) {
         if (bit(sum, 2)) { // Zeroing out
-          pqr.y = 0.0;
+          pqr.y = 0.0f;
         } else {
-          pqr.z = 0.0;
+          pqr.z = 0.0f;
         }
       }
       
@@ -346,16 +346,16 @@ namespace Simplex {
     }
     
     /// Skews the coordinate to normal Euclidean coordinate system
-    Vec3<double> skew(Vec3<double> v) const {
-      const double F = (std::sqrt(1.0 + 3.0) - 1.0) / 3;
-      double s = (v.x + v.y + v.z) * F;
+    Vec3f skew(Vec3f v) const {
+      const float F = (std::sqrt(1.0f + 3.0f) - 1.0f) / 3.0f;
+      float s = (v.x + v.y + v.z) * F;
       return {v.x + s, v.y + s, v.z + s};
     }
     
     /// Unskews the coordinate back to the simpletic coordinate system
-    Vec3<double> unskew(Vec3<double> v) const {
-      const double G = (1.0 - (1.0 / sqrt(3.0 + 1.0))) / 3.0;
-      double s = (v.x + v.y + v.z) * G;
+    Vec3f unskew(Vec3f v) const {
+      const float G = (1.0f - (1.0f / sqrt(3.0f + 1.0f))) / 3.0f;
+      float s = (v.x + v.y + v.z) * G;
       return {v.x - s, v.y - s, v.z - s};
     }
     
@@ -366,70 +366,70 @@ namespace Simplex {
      * @param vertex Vertex in the unit simplex cell (unskewed)
      * @return Contribution from the vertex
      */
-    double kernel(Vec3<double> uvw, Vec3<double> ijk, Vec3<double> vertex) const {
-      double sum = 0.0;
-      Vec3<double> rel = uvw - vertex; // Relative simplex cell vertex
-      double t = 0.6 - rel.length() * rel.length(); // 0.6 - x*x - y*y - z*z
-      if (t > 0) {
-        Vec3<double> pqr = grad(ijk + vertex, rel); // Generate gradient vector for vertex
+    float kernel(Vec3f uvw, Vec3f ijk, Vec3f vertex) const {
+      float sum = 0.0f;
+      Vec3f rel = uvw - vertex; // Relative simplex cell vertex
+      float t = 0.6f - rel.length() * rel.length(); // 0.6 - x*x - y*y - z*z
+      if (t > 0.0f) {
+        Vec3f pqr = grad(ijk + vertex, rel); // Generate gradient vector for vertex
         t *= t;
-        sum += 8 * t * t * pqr.sum();
+        sum += 8.0f * t * t * pqr.sum();
       }
       return sum;
     }
     
-    double get_value(double x, double y, double z) const override {
+    float get_value(float x, float y, float z) const override {
       /// Skew in the coordinate to the euclidean coordinate system
-      Vec3<double> xyz = {x, y, z};
-      Vec3<double> xyzs = skew(xyz);
+      Vec3f xyz = {x, y, z};
+      Vec3f xyzs = skew(xyz);
       /// Skewed unit simplex cell
-      Vec3<double> ijks = xyzs.floor(); // First vertex in euclidean coordinates
-      Vec3<double> ijk = unskew(ijks); // First vertex in the simpletic cell
+      Vec3f ijks = xyzs.floor(); // First vertex in euclidean coordinates
+      Vec3f ijk = unskew(ijks); // First vertex in the simpletic cell
       
       /// Finding the traversal order of vertices of the unit simplex in which (x,y,z) is in.
-      Vec3<double> uvw = xyz - ijk; // Relative unit simplex cell origin
-      std::array<Vec3<double>, 4> vertices; // n + 1 is the number of vertices in a n-dim. simplex
-      vertices[0] = unskew({0.0, 0.0, 0.0});
+      Vec3f uvw = xyz - ijk; // Relative unit simplex cell origin
+      std::array<Vec3f, 4> vertices; // n + 1 is the number of vertices in a n-dim. simplex
+      vertices[0] = unskew({0.0f, 0.0f, 0.0f});
       if (uvw.x > uvw.y) {
         if (uvw.y > uvw.z) {
           // u, v, w
-          vertices[1] = unskew({1.0, 0.0, 0.0});
-          vertices[2] = unskew({1.0, 1.0, 0.0});
+          vertices[1] = unskew({1.0f, 0.0f, 0.0f});
+          vertices[2] = unskew({1.0f, 1.0f, 0.0f});
         } else {
           if (uvw.x > uvw.z) {
             // u, w, v
-            vertices[1] = unskew({1.0, 0.0, 0.0});
-            vertices[2] = unskew({1.0, 0.0, 1.0});
+            vertices[1] = unskew({1.0f, 0.0f, 0.0f});
+            vertices[2] = unskew({1.0f, 0.0f, 1.0f});
           } else {
             // w, u, v
-            vertices[1] = unskew({0.0, 0.0, 1.0});
-            vertices[2] = unskew({1.0, 0.0, 1.0});
+            vertices[1] = unskew({0.0f, 0.0f, 1.0f});
+            vertices[2] = unskew({1.0f, 0.0f, 1.0f});
           }
         }
       } else {
         if (uvw.y > uvw.z) {
           if (uvw.z > uvw.x) {
             // v, w, u
-            vertices[1] = unskew({0.0, 1.0, 0.0});
-            vertices[2] = unskew({0.0, 1.0, 1.0});
+            vertices[1] = unskew({0.0f, 1.0f, 0.0f});
+            vertices[2] = unskew({0.0f, 1.0f, 1.0f});
           } else {
             // v, u, w
-            vertices[1] = unskew({0.0, 1.0, 0.0});
-            vertices[2] = unskew({1.0, 1.0, 0.0});
+            vertices[1] = unskew({0.0f, 1.0f, 0.0f});
+            vertices[2] = unskew({1.0f, 1.0f, 0.0f});
           }
         } else {
           // w, v, u
-          vertices[1] = unskew({0.0, 0.0, 1.0});
-          vertices[2] = unskew({0.0, 1.0, 1.0});
+          vertices[1] = unskew({0.0f, 0.0f, 1.0f});
+          vertices[2] = unskew({0.0f, 1.0f, 1.0f});
         }
       }
-      vertices[3] = unskew({1.0, 1.0, 1.0});
+      vertices[3] = unskew({1.0f, 1.0, 1.0});
       
       /// Spherical kernel summation - contribution from each vertex
-      double sum =  kernel(uvw, ijk, vertices[0]) + kernel(uvw, ijk, vertices[1]) +
-                    kernel(uvw, ijk, vertices[2]) + kernel(uvw, ijk, vertices[3]);
+      float sum = kernel(uvw, ijk, vertices[0]) + kernel(uvw, ijk, vertices[1]) +
+                  kernel(uvw, ijk, vertices[2]) + kernel(uvw, ijk, vertices[3]);
       
-      return clamp(sum, -1.0, 1.0);
+      return clamp(sum, -1.0f, 1.0f);
     }
   };
   
@@ -442,26 +442,26 @@ namespace Simplex {
   template<int num_grads = 256>
   class Tables : public Noise {
     /// 2D Normalized gradients table
-    std::array<Vec2<double>, num_grads> grads2;
+    std::array<Vec2f, num_grads> grads2;
     
     /// 3D Normalized gradients table
-    std::array<Vec3<double>, num_grads> grads3;
+    std::array<Vec3f, num_grads> grads3;
     
     /// Permutation table for indices to the gradients
     std::array<u_char, num_grads> perms;
   public:
-    /// Perms size is double that of grad to avoid index wrapping
+    /// Perms size is float that of grad to avoid index wrapping
     explicit Tables(uint64_t seed) {
       std::mt19937 engine(seed);
-      std::uniform_real_distribution<> distr(-1.0, 1.0);
+      std::uniform_real_distribution<float> distr(-1.0f, 1.0f);
       /// Fill the gradients list with random normalized vectors
       for (int i = 0; i < grads2.size(); i++) {
-        double x = distr(engine);
-        double y = distr(engine);
-        double z = distr(engine);
-        auto grad_vector = Vec2<double>{x, y}.normalized();
+        float x = distr(engine);
+        float y = distr(engine);
+        float z = distr(engine);
+        Vec2f grad_vector = Vec2f{x, y}.normalized();
         grads2[i] = grad_vector;
-        auto grad3_vector = Vec3<double>{x, y, z}.normalized();
+        Vec3f grad3_vector = Vec3f{x, y, z}.normalized();
         grads3[i] = grad3_vector;
       }
       
@@ -473,60 +473,60 @@ namespace Simplex {
       std::shuffle(perms.begin(), perms.end(), engine);
     }
     
-    double get_value(double x, double y) const override {
-      const double F = (std::sqrt(2.0 + 1.0) - 1.0) / 2.0; // F = (sqrt(n + 1) - 1) / n
-      double s = (x + y) * F;
-      double xs = x + s;
-      double ys = y + s;
+    float get_value(float x, float y) const override {
+      const float F = (std::sqrt(2.0f + 1.0f) - 1.0f) / 2.0f; // F = (sqrt(n + 1) - 1) / n
+      float s = (x + y) * F;
+      float xs = x + s;
+      float ys = y + s;
       int i = (int) std::floor(xs);
       int j = (int) std::floor(ys);
       
-      const double G = (3.0 - std::sqrt(2.0 + 1.0)) / 6.0; // G = (1 - (1 / sqrt(n + 1)) / n
-      double t = (i + j) * G;
-      Vec2<double> cell_origin{i - t, j - t};
-      Vec2<double> vertex_a = Vec2<double>{x, y} - cell_origin;
+      const float G = (3.0f - std::sqrt(2.0f + 1.0f)) / 6.0f; // G = (1 - (1 / sqrt(n + 1)) / n
+      float t = (i + j) * G;
+      Vec2f cell_origin{i - t, j - t};
+      Vec2f vertex_a = Vec2f{x, y} - cell_origin;
       
-      auto x_step = 0;
-      auto y_step = 0;
+      float x_step = 0.0f;
+      float y_step = 0.0f;
       if (vertex_a.x > vertex_a.y) { // Lower triangle
-        x_step = 1;
+        x_step = 1.0f;
       } else {
-        y_step = 1;
+        y_step = 1.0f;
       }
       
-      Vec2<double> vertex_b{vertex_a.x - x_step + G, vertex_a.y - y_step + G};
-      Vec2<double> vertex_c{vertex_a.x - 1.0 + 2.0 * G, vertex_a.y - 1.0 + 2.0 * G};
+      Vec2f vertex_b{vertex_a.x - x_step + G, vertex_a.y - y_step + G};
+      Vec2f vertex_c{vertex_a.x - 1.0f + 2.0f * G, vertex_a.y - 1.0f + 2.0f * G};
       
-      auto ii = i % 255; // FIXME: Bit mask instead? Measure speedup
-      auto jj = j % 255;
-      auto grad_a = grads2[perms[ii + perms[jj]]];
-      auto grad_b = grads2[perms[ii + x_step + perms[jj + y_step]]];
-      auto grad_c = grads2[perms[ii + 1 + perms[jj + 1]]];
+      const uint32_t ii = i % 255; // FIXME: Bit mask instead? Measure speedup
+      const uint32_t jj = j % 255;
+      Vec2f grad_a = grads2[perms[ii + perms[jj]]];
+      Vec2f grad_b = grads2[perms[ii + x_step + perms[jj + y_step]]];
+      Vec2f grad_c = grads2[perms[ii + 1 + perms[jj + 1]]];
       
       /// Calculate contribution from the vertices in a circle
-      const double radius = 0.6; // Radius of the surflet circle (0.6 in patent)
-      double sum = 0.0;
+      const float radius = 0.6f; // Radius of the surflet circle (0.6 in patent)
+      float sum = 0.0f;
       
-      double t0 = radius - vertex_a.length() * vertex_a.length();
-      if (t0 > 0) {
-        sum += 8 * std::pow(t0, 4) * grad_a.dot(vertex_a);
+      float t0 = radius - vertex_a.length() * vertex_a.length();
+      if (t0 > 0.0f) {
+        sum += 8.0f * std::pow(t0, 4.0f) * grad_a.dot(vertex_a);
       }
       
-      double t1 = radius - vertex_b.length() * vertex_b.length();
-      if (t1 > 0) {
-        sum += 8 * std::pow(t1, 4) * grad_b.dot(vertex_b);
+      float t1 = radius - vertex_b.length() * vertex_b.length();
+      if (t1 > 0.0f) {
+        sum += 8.0f * std::pow(t1, 4.0f) * grad_b.dot(vertex_b);
       }
       
-      double t2 = radius - vertex_c.length() * vertex_c.length();
-      if (t2 > 0) {
-        sum += 8 * std::pow(t2, 4) * grad_c.dot(vertex_c);
+      float t2 = radius - vertex_c.length() * vertex_c.length();
+      if (t2 > 0.0f) {
+        sum += 8.0f * std::pow(t2, 4.0f) * grad_c.dot(vertex_c);
       }
       
-      return clamp(sum, -1.0, 1.0);
+      return clamp(sum, -1.0f, 1.0f);
     }
     
     // TODO: Implement
-    double get_value(double x, double y, double z) const override { exit(EXIT_FAILURE); }
+    float get_value(float x, float y, float z) const override { exit(EXIT_FAILURE); }
   };
 }
 
@@ -542,10 +542,10 @@ namespace Perlin {
   template<int num_grads = 256>
   class Improved : public Noise {
     /// 2D Normalized gradients table
-    std::array<Vec2<double>, 4> grads;
+    std::array<Vec2f, 4> grads;
     
     /// 3D Normalized gradients table
-    std::array<Vec3<double>, 16> grads3;
+    std::array<Vec3f, 16> grads3;
     
     /// Permutation table for indices to the gradients (2D)
     std::array<u_char, num_grads> perms;
@@ -556,47 +556,47 @@ namespace Perlin {
   public:
     explicit Improved(uint64_t seed) {
       std::mt19937 engine(seed);
-      std::uniform_real_distribution<> distr(-1.0, 1.0);
+      std::uniform_real_distribution<float> distr(-1.0f, 1.0);
       /// 4 gradients for each edge of a unit square, no need for padding, is power of 2
       grads = {
-              Vec2<double>{ 1,  0},
-              Vec2<double>{ 0,  1},
-              Vec2<double>{-1,  0},
-              Vec2<double>{ 0, -1}
+              Vec2f{ 1.0f,  0.0f},
+              Vec2f{ 0.0f,  1.0f},
+              Vec2f{-1.0f,  0.0f},
+              Vec2f{ 0.0f, -1.0f}
       };
       // FIXME: Is all of the vectors inside grads?
       /// 12 gradients from the center to each edge of a unit cube, 4 duplicated vectors for padding so that the modulo is on a power of 2 (faster)
       grads3 = {
-              Vec3<double>{ 1,  1,  0},
-              Vec3<double>{-1,  1,  0},
-              Vec3<double>{ 1, -1,  0},
-              Vec3<double>{-1, -1,  0},
-              Vec3<double>{ 1,  0,  1},
-              Vec3<double>{-1,  0,  1},
-              Vec3<double>{ 1,  0, -1},
-              Vec3<double>{-1,  0, -1},
-              Vec3<double>{ 0,  1,  1},
-              Vec3<double>{ 0, -1,  1},
-              Vec3<double>{ 0,  1, -1},
-              Vec3<double>{ 0, -1, -1},
-              Vec3<double>{ 1,  1,  0},
-              Vec3<double>{-1,  1,  0},
-              Vec3<double>{ 0, -1,  1},
-              Vec3<double>{ 0, -1, -1}
+              Vec3f{ 1.0f,  1.0f,  0.0f},
+              Vec3f{-1.0f,  1.0f,  0.0f},
+              Vec3f{ 1.0f, -1.0f,  0.0f},
+              Vec3f{-1.0f, -1.0f,  0.0f},
+              Vec3f{ 1.0f,  0.0f,  1.0f},
+              Vec3f{-1.0f,  0.0f,  1.0f},
+              Vec3f{ 1.0f,  0.0f, -1.0f},
+              Vec3f{-1.0f,  0.0f, -1.0f},
+              Vec3f{ 0.0f,  1.0f,  1.0f},
+              Vec3f{ 0.0f, -1.0f,  1.0f},
+              Vec3f{ 0.0f,  1.0f, -1.0f},
+              Vec3f{ 0.0f, -1.0f, -1.0f},
+              Vec3f{ 1.0f,  1.0f,  0.0f},
+              Vec3f{-1.0f,  1.0f,  0.0f},
+              Vec3f{ 0.0f, -1.0f,  1.0f},
+              Vec3f{ 0.0f, -1.0f, -1.0f}
       };
       
       /// Fill gradient lookup array with random indices to the gradients list
-      for (int i = 0; i < perms.size(); i++) { perms[i] = i % grads.size(); }
-      for (int i = 0; i < perms3.size(); i++) { perms3[i] = i % grads3.size(); }
+      for (size_t i = 0; i < perms.size(); i++) { perms[i] = i % grads.size(); }
+      for (size_t i = 0; i < perms3.size(); i++) { perms3[i] = i % grads3.size(); }
       
       /// Randomize the order of the indices
       std::shuffle(perms.begin(), perms.end(), engine);
     }
     
-    double get_value(double X, double Y) const override {
-      /// Compress the coordinates inside the chunk; double part + int part = point coordinate
-      X += 0.1;
-      Y += 0.1; // Skew coordinates to avoid integer lines becoming zero
+    float get_value(float X, float Y) const override {
+      /// Compress the coordinates inside the chunk; float part + int part = point coordinate
+      X += 0.1f;
+      Y += 0.1f; // Skew coordinates to avoid integer lines becoming zero
       /// Grid points from the chunk in the world
       int X0 = (int) std::floor(X);
       int Y0 = (int) std::floor(Y);
@@ -604,41 +604,41 @@ namespace Perlin {
       int Y1 = (int) std::ceil(Y);
       
       /// Gradients using hashed indices from lookup list
-      Vec2<double> x0y0 = grads[perms[(X0 + perms[Y0 % perms.size()]) % perms.size()]];
-      Vec2<double> x1y0 = grads[perms[(X1 + perms[Y0 % perms.size()]) % perms.size()]];
-      Vec2<double> x0y1 = grads[perms[(X0 + perms[Y1 % perms.size()]) % perms.size()]];
-      Vec2<double> x1y1 = grads[perms[(X1 + perms[Y1 % perms.size()]) % perms.size()]];
+      Vec2f x0y0 = grads[perms[(X0 + perms[Y0 % perms.size()]) % perms.size()]];
+      Vec2f x1y0 = grads[perms[(X1 + perms[Y0 % perms.size()]) % perms.size()]];
+      Vec2f x0y1 = grads[perms[(X0 + perms[Y1 % perms.size()]) % perms.size()]];
+      Vec2f x1y1 = grads[perms[(X1 + perms[Y1 % perms.size()]) % perms.size()]];
       
       /// Vectors from gradients to point in unit square
-      auto v00 = Vec2<double>{X - X0, Y - Y0};
-      auto v10 = Vec2<double>{X - X1, Y - Y0};
-      auto v01 = Vec2<double>{X - X0, Y - Y1};
-      auto v11 = Vec2<double>{X - X1, Y - Y1};
+      Vec2f v00 = Vec2f{X - X0, Y - Y0};
+      Vec2f v10 = Vec2f{X - X1, Y - Y0};
+      Vec2f v01 = Vec2f{X - X0, Y - Y1};
+      Vec2f v11 = Vec2f{X - X1, Y - Y1};
       
       /// Contribution of gradient vectors by dot product between relative vectors and gradients
-      double d00 = x0y0.dot(v00);
-      double d10 = x1y0.dot(v10);
-      double d01 = x0y1.dot(v01);
-      double d11 = x1y1.dot(v11);
+      float d00 = x0y0.dot(v00);
+      float d10 = x1y0.dot(v10);
+      float d01 = x0y1.dot(v01);
+      float d11 = x1y1.dot(v11);
       
       /// Interpolate dot product values at sample point using polynomial interpolation 6x^5 - 15x^4 + 10x^3
-      double yf = Y - Y0; // Float offset inside the square [0, 1]
-      double xf = X - X0; // Float offset inside the square [0, 1]
+      float yf = Y - Y0; // Float offset inside the square [0, 1]
+      float xf = X - X0; // Float offset inside the square [0, 1]
       
-      auto wx = quintic_fade(xf);
-      auto wy = quintic_fade(yf);
+      float wx = quintic_fade(xf);
+      float wy = quintic_fade(yf);
       
       /// Interpolate along x for the contributions from each of the gradients
-      auto xa = lerp(wx, d00, d10);
-      auto xb = lerp(wx, d01, d11);
+      float xa = lerp(wx, d00, d10);
+      float xb = lerp(wx, d01, d11);
       
-      auto val = lerp(wy, xa, xb);
+      float val = lerp(wy, xa, xb);
       
-      return clamp(val, -1.0, 1.0);
+      return clamp(val, -1.0f, 1.0);
     }
     
-    double get_value(double X, double Y, double Z) const override {
-      /// Compress the coordinates inside the chunk; double part + int part = point coordinate
+    float get_value(float X, float Y, float Z) const override {
+      /// Compress the coordinates inside the chunk; float part + int part = point coordinate
       /// Grid points from the chunk in the world
       int X0 = (int) std::floor(X);
       int Y0 = (int) std::floor(Y);
@@ -648,70 +648,70 @@ namespace Perlin {
       int Z1 = (int) std::ceil(Z);
       
       /// Gradients using hashed indices from lookup list
-      Vec3<double> x0y0z0 = grads3[perms[(X0 + perms[(Y0 + perms[Z0 % perms.size()]) % perms.size()]) %
+      Vec3f x0y0z0 = grads3[perms[(X0 + perms[(Y0 + perms[Z0 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
-      Vec3<double> x1y0z0 = grads3[perms[(X1 + perms[(Y0 + perms[Z0 % perms.size()]) % perms.size()]) %
+      Vec3f x1y0z0 = grads3[perms[(X1 + perms[(Y0 + perms[Z0 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
-      Vec3<double> x0y1z0 = grads3[perms[(X0 + perms[(Y1 + perms[Z0 % perms.size()]) % perms.size()]) %
+      Vec3f x0y1z0 = grads3[perms[(X0 + perms[(Y1 + perms[Z0 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
-      Vec3<double> x1y1z0 = grads3[perms[(X1 + perms[(Y1 + perms[Z0 % perms.size()]) % perms.size()]) %
+      Vec3f x1y1z0 = grads3[perms[(X1 + perms[(Y1 + perms[Z0 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
       
-      Vec3<double> x0y0z1 = grads3[perms[(X0 + perms[(Y0 + perms[Z1 % perms.size()]) % perms.size()]) %
+      Vec3f x0y0z1 = grads3[perms[(X0 + perms[(Y0 + perms[Z1 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
-      Vec3<double> x1y0z1 = grads3[perms[(X1 + perms[(Y0 + perms[Z1 % perms.size()]) % perms.size()]) %
+      Vec3f x1y0z1 = grads3[perms[(X1 + perms[(Y0 + perms[Z1 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
-      Vec3<double> x0y1z1 = grads3[perms[(X0 + perms[(Y1 + perms[Z1 % perms.size()]) % perms.size()]) %
+      Vec3f x0y1z1 = grads3[perms[(X0 + perms[(Y1 + perms[Z1 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
-      Vec3<double> x1y1z1 = grads3[perms[(X1 + perms[(Y1 + perms[Z1 % perms.size()]) % perms.size()]) %
+      Vec3f x1y1z1 = grads3[perms[(X1 + perms[(Y1 + perms[Z1 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
       
       /// Vectors from gradients to point in unit cube
-      auto v000 = Vec3<double>{X - X0, Y - Y0, Z - Z0};
-      auto v100 = Vec3<double>{X - X1, Y - Y0, Z - Z0};
-      auto v010 = Vec3<double>{X - X0, Y - Y1, Z - Z0};
-      auto v110 = Vec3<double>{X - X1, Y - Y1, Z - Z0};
+      Vec3f v000 = Vec3f{X - X0, Y - Y0, Z - Z0};
+      Vec3f v100 = Vec3f{X - X1, Y - Y0, Z - Z0};
+      Vec3f v010 = Vec3f{X - X0, Y - Y1, Z - Z0};
+      Vec3f v110 = Vec3f{X - X1, Y - Y1, Z - Z0};
       
-      auto v001 = Vec3<double>{X - X0, Y - Y0, Z - Z1};
-      auto v101 = Vec3<double>{X - X1, Y - Y0, Z - Z1};
-      auto v011 = Vec3<double>{X - X0, Y - Y1, Z - Z1};
-      auto v111 = Vec3<double>{X - X1, Y - Y1, Z - Z1};
+      Vec3f v001 = Vec3f{X - X0, Y - Y0, Z - Z1};
+      Vec3f v101 = Vec3f{X - X1, Y - Y0, Z - Z1};
+      Vec3f v011 = Vec3f{X - X0, Y - Y1, Z - Z1};
+      Vec3f v111 = Vec3f{X - X1, Y - Y1, Z - Z1};
       
       /// Contribution of gradient vectors by dot product between relative vectors and gradients
-      double d000 = dot(x0y0z0, v000);
-      double d100 = dot(x1y0z0, v100);
-      double d010 = dot(x0y1z0, v010);
-      double d110 = dot(x1y1z0, v110);
+      float d000 = dot(x0y0z0, v000);
+      float d100 = dot(x1y0z0, v100);
+      float d010 = dot(x0y1z0, v010);
+      float d110 = dot(x1y1z0, v110);
       
-      double d001 = dot(x0y0z1, v001);
-      double d101 = dot(x1y0z1, v101);
-      double d011 = dot(x0y1z1, v011);
-      double d111 = dot(x1y1z1, v111);
+      float d001 = dot(x0y0z1, v001);
+      float d101 = dot(x1y0z1, v101);
+      float d011 = dot(x0y1z1, v011);
+      float d111 = dot(x1y1z1, v111);
       
       /// Interpolate dot product values at sample point using polynomial interpolation 6x^5 - 15x^4 + 10x^3
-      double yf = Y - Y0; // Float offset inside the cube [0, 1]
-      double xf = X - X0; // Float offset inside the cube [0, 1]
-      double zf = Z - Z0; // Float offset inside the cube [0, 1]
+      float yf = Y - Y0; // Float offset inside the cube [0, 1]
+      float xf = X - X0; // Float offset inside the cube [0, 1]
+      float zf = Z - Z0; // Float offset inside the cube [0, 1]
       
-      auto wx = quintic_fade(xf);
-      auto wy = quintic_fade(yf);
-      auto wz = quintic_fade(zf);
+      float wx = quintic_fade(xf);
+      float wy = quintic_fade(yf);
+      float wz = quintic_fade(zf);
       
       /// Interpolate along x for the contributions from each of the gradients
-      auto xa = lerp(wx, d000, d100);
-      auto xb = lerp(wx, d010, d110);
+      float xa = lerp(wx, d000, d100);
+      float xb = lerp(wx, d010, d110);
       
-      auto xc = lerp(wx, d001, d101);
-      auto xd = lerp(wx, d011, d111);
+      float xc = lerp(wx, d001, d101);
+      float xd = lerp(wx, d011, d111);
       
       /// Interpolate along y for the contributions from each of the gradients
-      auto ya = lerp(wy, xa, xb);
-      auto yb = lerp(wy, xc, xd);
+      float ya = lerp(wy, xa, xb);
+      float yb = lerp(wy, xc, xd);
       
       /// Interpolate along z for the contributions from each of the gradients
-      auto za = lerp(wz, ya, yb);
+      float za = lerp(wz, ya, yb);
       
-      return clamp(za, -1.0, 1.0);
+      return clamp(za, -1.0f, 1.0f);
     }
   };
   
@@ -721,10 +721,10 @@ namespace Perlin {
    */
   class Original : public Noise {
     /// 2D Normalized gradients table
-    std::vector<Vec2<double>> grads;
+    std::vector<Vec2f> grads;
     
     /// 3D Normalized gradients table
-    std::vector<Vec3<double>> grads3;
+    std::vector<Vec3f> grads3;
     
     /// Permutation table for indices to the gradients
     std::vector<u_char> perms;
@@ -732,15 +732,15 @@ namespace Perlin {
   public:
     Original(uint64_t seed) : grads(256), grads3(256), perms(256) {
       std::mt19937 engine(seed);
-      std::uniform_real_distribution<> distr(-1.0, 1.0);
+      std::uniform_real_distribution<float> distr(-1.0f, 1.0f);
       /// Fill the gradients list with random normalized vectors
-      for (int i = 0; i < grads.size(); i++) {
-        double x = distr(engine);
-        double y = distr(engine);
-        double z = distr(engine);
-        auto grad_vector = Vec2<double>{x, y}.normalized();
+      for (size_t i = 0; i < grads.size(); i++) {
+        float x = distr(engine);
+        float y = distr(engine);
+        float z = distr(engine);
+        Vec2f grad_vector = Vec2f{x, y}.normalized();
         grads[i] = grad_vector;
-        auto grad3_vector = Vec3<double>{x, y, z}.normalized();
+        Vec3f grad3_vector = Vec3f{x, y, z}.normalized();
         grads3[i] = grad3_vector;
       }
       
@@ -752,10 +752,10 @@ namespace Perlin {
       std::shuffle(perms.begin(), perms.end(), engine);
     }
     
-    double get_value(double X, double Y) const override {
-      /// Compress the coordinates inside the chunk; double part + int part = point coordinate
-      X += 0.1;
-      Y += 0.1; // Skew coordinates to avoid integer lines becoming zero
+    float get_value(float X, float Y) const override {
+      /// Compress the coordinates inside the chunk; float part + int part = point coordinate
+      X += 0.1f;
+      Y += 0.1f; // Skew coordinates to avoid integer lines becoming zero
       /// Grid points from the chunk in the world
       int X0 = (int) std::floor(X);
       int Y0 = (int) std::floor(Y);
@@ -764,41 +764,41 @@ namespace Perlin {
       
       /// Gradients using hashed indices from lookup list
       // FIXME: Implement variation where perms.size() is a power of two in order to do a bit masking instead, measure speedup.
-      Vec2<double> x0y0 = grads[perms[(X0 + perms[Y0 % perms.size()]) % perms.size()]];
-      Vec2<double> x1y0 = grads[perms[(X1 + perms[Y0 % perms.size()]) % perms.size()]];
-      Vec2<double> x0y1 = grads[perms[(X0 + perms[Y1 % perms.size()]) % perms.size()]];
-      Vec2<double> x1y1 = grads[perms[(X1 + perms[Y1 % perms.size()]) % perms.size()]];
+      Vec2f x0y0 = grads[perms[(X0 + perms[Y0 % perms.size()]) % perms.size()]];
+      Vec2f x1y0 = grads[perms[(X1 + perms[Y0 % perms.size()]) % perms.size()]];
+      Vec2f x0y1 = grads[perms[(X0 + perms[Y1 % perms.size()]) % perms.size()]];
+      Vec2f x1y1 = grads[perms[(X1 + perms[Y1 % perms.size()]) % perms.size()]];
       
       /// Vectors from gradients to point in unit square
-      auto v00 = Vec2<double>{X - X0, Y - Y0};
-      auto v10 = Vec2<double>{X - X1, Y - Y0};
-      auto v01 = Vec2<double>{X - X0, Y - Y1};
-      auto v11 = Vec2<double>{X - X1, Y - Y1};
+      Vec2f v00 = Vec2f{X - X0, Y - Y0};
+      Vec2f v10 = Vec2f{X - X1, Y - Y0};
+      Vec2f v01 = Vec2f{X - X0, Y - Y1};
+      Vec2f v11 = Vec2f{X - X1, Y - Y1};
       
       /// Contribution of gradient vectors by dot product between relative vectors and gradients
-      double d00 = x0y0.dot(v00);
-      double d10 = x1y0.dot(v10);
-      double d01 = x0y1.dot(v01);
-      double d11 = x1y1.dot(v11);
+      float d00 = x0y0.dot(v00);
+      float d10 = x1y0.dot(v10);
+      float d01 = x0y1.dot(v01);
+      float d11 = x1y1.dot(v11);
       
       /// Interpolate dot product values at sample point using polynomial interpolation 6x^5 - 15x^4 + 10x^3
-      double yf = Y - Y0; // Float offset inside the square [0, 1]
-      double xf = X - X0; // Float offset inside the square [0, 1]
+      float yf = Y - Y0; // Float offset inside the square [0, 1]
+      float xf = X - X0; // Float offset inside the square [0, 1]
       
-      auto wx = smoothstep(xf);
-      auto wy = smoothstep(yf);
+      float wx = smoothstep(xf);
+      float wy = smoothstep(yf);
       
       /// Interpolate along x for the contributions from each of the gradients
-      auto xa = lerp(wx, d00, d10);
-      auto xb = lerp(wx, d01, d11);
+      float xa = lerp(wx, d00, d10);
+      float xb = lerp(wx, d01, d11);
       
-      auto val = lerp(wy, xa, xb);
+      float val = lerp(wy, xa, xb);
       
-      return clamp(val, -1.0, 1.0);
+      return clamp(val, -1.0f, 1.0);
     }
     
-    double get_value(double X, double Y, double Z) const override {
-      /// Compress the coordinates inside the chunk; double part + int part = point coordinate
+    float get_value(float X, float Y, float Z) const override {
+      /// Compress the coordinates inside the chunk; float part + int part = point coordinate
       /// Grid points from the chunk in the world
       int X0 = (int) std::floor(X);
       int Y0 = (int) std::floor(Y);
@@ -808,70 +808,70 @@ namespace Perlin {
       int Z1 = (int) std::ceil(Z);
       
       /// Gradients using hashed indices from lookup list
-      Vec3<double> x0y0z0 = grads3[perms[(X0 + perms[(Y0 + perms[Z0 % perms.size()]) % perms.size()]) %
+      Vec3f x0y0z0 = grads3[perms[(X0 + perms[(Y0 + perms[Z0 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
-      Vec3<double> x1y0z0 = grads3[perms[(X1 + perms[(Y0 + perms[Z0 % perms.size()]) % perms.size()]) %
+      Vec3f x1y0z0 = grads3[perms[(X1 + perms[(Y0 + perms[Z0 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
-      Vec3<double> x0y1z0 = grads3[perms[(X0 + perms[(Y1 + perms[Z0 % perms.size()]) % perms.size()]) %
+      Vec3f x0y1z0 = grads3[perms[(X0 + perms[(Y1 + perms[Z0 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
-      Vec3<double> x1y1z0 = grads3[perms[(X1 + perms[(Y1 + perms[Z0 % perms.size()]) % perms.size()]) %
+      Vec3f x1y1z0 = grads3[perms[(X1 + perms[(Y1 + perms[Z0 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
       
-      Vec3<double> x0y0z1 = grads3[perms[(X0 + perms[(Y0 + perms[Z1 % perms.size()]) % perms.size()]) %
+      Vec3f x0y0z1 = grads3[perms[(X0 + perms[(Y0 + perms[Z1 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
-      Vec3<double> x1y0z1 = grads3[perms[(X1 + perms[(Y0 + perms[Z1 % perms.size()]) % perms.size()]) %
+      Vec3f x1y0z1 = grads3[perms[(X1 + perms[(Y0 + perms[Z1 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
-      Vec3<double> x0y1z1 = grads3[perms[(X0 + perms[(Y1 + perms[Z1 % perms.size()]) % perms.size()]) %
+      Vec3f x0y1z1 = grads3[perms[(X0 + perms[(Y1 + perms[Z1 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
-      Vec3<double> x1y1z1 = grads3[perms[(X1 + perms[(Y1 + perms[Z1 % perms.size()]) % perms.size()]) %
+      Vec3f x1y1z1 = grads3[perms[(X1 + perms[(Y1 + perms[Z1 % perms.size()]) % perms.size()]) %
                                          perms.size()]];
       
       /// Vectors from gradients to point in unit cube
-      auto v000 = Vec3<double>{X - X0, Y - Y0, Z - Z0};
-      auto v100 = Vec3<double>{X - X1, Y - Y0, Z - Z0};
-      auto v010 = Vec3<double>{X - X0, Y - Y1, Z - Z0};
-      auto v110 = Vec3<double>{X - X1, Y - Y1, Z - Z0};
+      Vec3f v000 = Vec3f{X - X0, Y - Y0, Z - Z0};
+      Vec3f v100 = Vec3f{X - X1, Y - Y0, Z - Z0};
+      Vec3f v010 = Vec3f{X - X0, Y - Y1, Z - Z0};
+      Vec3f v110 = Vec3f{X - X1, Y - Y1, Z - Z0};
       
-      auto v001 = Vec3<double>{X - X0, Y - Y0, Z - Z1};
-      auto v101 = Vec3<double>{X - X1, Y - Y0, Z - Z1};
-      auto v011 = Vec3<double>{X - X0, Y - Y1, Z - Z1};
-      auto v111 = Vec3<double>{X - X1, Y - Y1, Z - Z1};
+      Vec3f v001 = Vec3f{X - X0, Y - Y0, Z - Z1};
+      Vec3f v101 = Vec3f{X - X1, Y - Y0, Z - Z1};
+      Vec3f v011 = Vec3f{X - X0, Y - Y1, Z - Z1};
+      Vec3f v111 = Vec3f{X - X1, Y - Y1, Z - Z1};
       
       /// Contribution of gradient vectors by dot product between relative vectors and gradients
-      double d000 = dot(x0y0z0, v000);
-      double d100 = dot(x1y0z0, v100);
-      double d010 = dot(x0y1z0, v010);
-      double d110 = dot(x1y1z0, v110);
+      float d000 = dot(x0y0z0, v000);
+      float d100 = dot(x1y0z0, v100);
+      float d010 = dot(x0y1z0, v010);
+      float d110 = dot(x1y1z0, v110);
       
-      double d001 = dot(x0y0z1, v001);
-      double d101 = dot(x1y0z1, v101);
-      double d011 = dot(x0y1z1, v011);
-      double d111 = dot(x1y1z1, v111);
+      float d001 = dot(x0y0z1, v001);
+      float d101 = dot(x1y0z1, v101);
+      float d011 = dot(x0y1z1, v011);
+      float d111 = dot(x1y1z1, v111);
       
       /// Interpolate dot product values at sample point using polynomial interpolation 6x^5 - 15x^4 + 10x^3
-      double yf = Y - Y0; // Float offset inside the cube [0, 1]
-      double xf = X - X0; // Float offset inside the cube [0, 1]
-      double zf = Z - Z0; // Float offset inside the cube [0, 1]
+      float yf = Y - Y0; // Float offset inside the cube [0, 1]
+      float xf = X - X0; // Float offset inside the cube [0, 1]
+      float zf = Z - Z0; // Float offset inside the cube [0, 1]
       
-      auto wx = smoothstep(xf);
-      auto wy = smoothstep(yf);
-      auto wz = smoothstep(zf);
+      float wx = smoothstep(xf);
+      float wy = smoothstep(yf);
+      float wz = smoothstep(zf);
       
       /// Interpolate along x for the contributions from each of the gradients
-      auto xa = lerp(wx, d000, d100);
-      auto xb = lerp(wx, d010, d110);
+      float xa = lerp(wx, d000, d100);
+      float xb = lerp(wx, d010, d110);
       
-      auto xc = lerp(wx, d001, d101);
-      auto xd = lerp(wx, d011, d111);
+      float xc = lerp(wx, d001, d101);
+      float xd = lerp(wx, d011, d111);
       
       /// Interpolate along y for the contributions from each of the gradients
-      auto ya = lerp(wy, xa, xb);
-      auto yb = lerp(wy, xc, xd);
+      float ya = lerp(wy, xa, xb);
+      float yb = lerp(wy, xc, xd);
       
       /// Interpolate along z for the contributions from each of the gradients
-      auto za = lerp(wz, ya, yb);
+      float za = lerp(wz, ya, yb);
       
-      return clamp(za, -1.0, 1.0);
+      return clamp(za, -1.0f, 1.0f);
     }
   };
 }

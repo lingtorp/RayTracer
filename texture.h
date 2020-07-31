@@ -6,28 +6,28 @@
 
 class Texture {
 public:
-  virtual Vec3<> value(double u, double v, const Vec3<>& p) const = 0;
+  virtual Vec3f value(float u, float v, const Vec3f& p) const = 0;
 };
 
 class ConstantTexture : public Texture {
 public:
-  Vec3<> rgb;
-  ConstantTexture(double r, double g, double b): rgb{r, g, b} {}
-  explicit ConstantTexture(Vec3<> rgb_color): rgb{rgb_color} {}
+  Vec3f rgb;
+  ConstantTexture(float r, float g, float b): rgb{r, g, b} {}
+  explicit ConstantTexture(Vec3f rgb_color): rgb{rgb_color} {}
   
-  Vec3<> value(double u, double v, const Vec3<> &p) const override {
+  Vec3f value(float u, float v, const Vec3f &p) const override {
     return rgb;
   }
 };
 
 class CheckerTexture : public Texture {
 public:
-  Texture* tex0;
-  Texture* tex1;
+  Texture* tex0 = nullptr;
+  Texture* tex1 = nullptr;
   CheckerTexture(Texture* tex0, Texture* tex1): tex0{tex0}, tex1{tex1} {}
   
-  Vec3<> value(double u, double v, const Vec3<> &p) const override {
-    double sines = sin(10*p.x)*sin(10.0*p.y)*sin(10.0*p.z);
+  Vec3f value(float u, float v, const Vec3f &p) const override {
+    float sines = sin(10.0f*p.x) * sin(10.0f*p.y) * sin(10.0f*p.z);
     if (sines < 0) {
       return tex0->value(u, v, p);
     } else {
@@ -40,11 +40,11 @@ class PerlinTexture : public Texture {
   Perlin::Original noise_gen;
 public:
   PerlinTexture(): noise_gen{1337} {};
-  Vec3<> value(double u, double v, const Vec3<> &p) const override {
+  Vec3f value(float u, float v, const Vec3f &p) const override {
     const uint32_t zoom_factor = 128;
-    Vec3<> color = Vec3<>{noise_gen.fbm(1000 * p, zoom_factor)};
+    Vec3f color = Vec3f{noise_gen.fbm(1000 * p, zoom_factor)};
     if (color <= 0.05) {
-      return Vec3<>{0.05, 0.05, 0.05};
+      return Vec3f{0.05, 0.05, 0.05};
     }
     return color;
   }
@@ -69,8 +69,8 @@ public:
   
   ~ImageTexture() { stbi_image_free(data); }
   
-  Vec3<> value(double u, double v, const Vec3<> &p) const override {
-    if (data == nullptr) { return Vec3<>{}; }
+  Vec3f value(float u, float v, const Vec3f &p) const override {
+    if (data == nullptr) { return Vec3f{}; }
     int i = int(u*nx);
     int j = int((1-v)*ny-0.001f);
     if (i < 0) i = 0;
@@ -80,7 +80,7 @@ public:
     float r = int(data[3*i + 3*nx*j])   / 255.0f;
     float g = int(data[3*i + 3*nx*j+1]) / 255.0f;
     float b = int(data[3*i + 3*nx*j+2]) / 255.0f;
-    return Vec3<>{r, g, b};
+    return Vec3f{r, g, b};
   }
 };
 
